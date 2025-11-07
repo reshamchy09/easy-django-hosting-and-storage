@@ -1,0 +1,51 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Payment Pending{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #283048, #859398);
+        font-family: 'Poppins', sans-serif;
+        color: #fff;
+    }
+    .pending-box {
+        text-align: center;
+        padding: 60px 30px;
+        max-width: 600px;
+        margin: 100px auto;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+    .pending-box h2 {
+        color: #ffcc00;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .pending-box p {
+        font-size: 1.1rem;
+        color: #ddd;
+    }
+    .loader {
+        margin: 30px auto;
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #ffcc00;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="pending-box">
+    <div class="loader"></div>
+    <h2>Payment Pending ⏳</h2>
+    <p>Your payment request for <strong>{{ payment_request.gb_requested }} GB</strong> 
+       ({{ payment_request.amount }} Rs) is under review.</p>
+    <p>Please wait for admin approval.</p>
+</div>
+{% endblock %}

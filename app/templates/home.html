@@ -1,0 +1,1625 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Easy Host - Premium Web Hosting{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Particles -->
+<section class="hero">
+    <div class="particles" id="particles"></div>
+    <div class="hero-content reveal">
+        <div class="hero-badge">🚀 New: Free Migration Service</div>
+        <h1>Fast & Reliable Web Hosting</h1>
+        <p>Launch your website with secure, high-performance hosting, free SSL, and 24/7 expert support. Join thousands of satisfied customers.</p>
+        <div class="hero-actions">
+            <a href="{% url 'plans' %}" class="btn-primary">Get Started</a>
+            <a href="#demo" class="btn-secondary">
+                <i class="fas fa-play"></i> Watch Demo
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <strong>99.9%</strong>
+                <span>Uptime</span>
+            </div>
+            <div class="stat">
+                <strong>10K+</strong>
+                <span>Happy Clients</span>
+            </div>
+            <div class="stat">
+                <strong>24/7</strong>
+                <span>Support</span>
+            </div>
+        </div>
+    </div>
+    <div class="hero-image">
+        <div class="server-illustration">
+            <div class="server server-1"></div>
+            <div class="server server-2"></div>
+            <div class="server server-3"></div>
+            <div class="connection-lines"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust Badges -->
+<section class="trust-badges reveal">
+    <div class="container">
+        <p>Trusted by leading companies worldwide</p>
+        <div class="badges">
+            <div class="badge">SSL Secured</div>
+            <div class="badge">99.9% Uptime</div>
+            <div class="badge">24/7 Support</div>
+            <div class="badge">Money Back</div>
+            <div class="badge">Free Migration</div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container section">
+    <h2 class="section-title reveal">Why Choose Easy Host?</h2>
+    <p class="section-subtitle reveal">Everything you need to succeed online</p>
+    <div class="features-grid">
+        <div class="feature-card reveal">
+            <div class="feature-icon">
+                <i class="fas fa-server"></i>
+                <div class="icon-bg"></div>
+            </div>
+            <h3>99.9% Uptime Guarantee</h3>
+            <p>Your website stays online with our redundant infrastructure and monitoring systems.</p>
+            <div class="feature-stats">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Servers worldwide</span>
+            </div>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">
+                <i class="fas fa-headset"></i>
+                <div class="icon-bg"></div>
+            </div>
+            <h3>24/7 Expert Support</h3>
+            <p>Our friendly support team is always ready to help via chat, email, or phone.</p>
+            <div class="feature-stats">
+                <span class="stat-number">&lt;2min</span>
+                <span class="stat-label">Average response</span>
+            </div>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+                <div class="icon-bg"></div>
+            </div>
+            <h3>Advanced Security</h3>
+            <p>Military-grade encryption, DDoS protection, and daily backups keep you safe.</p>
+            <div class="feature-stats">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Protected sites</span>
+            </div>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">
+                <i class="fas fa-rocket"></i>
+                <div class="icon-bg"></div>
+            </div>
+            <h3>Lightning Fast</h3>
+            <p>SSD storage, CDN, and optimized servers deliver blazing-fast load times.</p>
+            <div class="feature-stats">
+                <span class="stat-number">2.5s</span>
+                <span class="stat-label">Average load time</span>
+            </div>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">
+                <i class="fas fa-tools"></i>
+                <div class="icon-bg"></div>
+            </div>
+            <h3>Easy Management</h3>
+            <p>Intuitive control panel with one-click installs for WordPress, Drupal, and more.</p>
+            <div class="feature-stats">
+                <span class="stat-number">400+</span>
+                <span class="stat-label">Apps available</span>
+            </div>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">
+                <i class="fas fa-globe"></i>
+                <div class="icon-bg"></div>
+            </div>
+            <h3>Global Network</h3>
+            <p>Strategically located data centers ensure optimal performance worldwide.</p>
+            <div class="feature-stats">
+                <span class="stat-number">15</span>
+                <span class="stat-label">Data centers</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Performance Stats -->
+<section class="performance-section">
+    <div class="container">
+        <div class="performance-content reveal">
+            <h2>Unmatched Performance</h2>
+            <p>See how we stack up against the competition</p>
+            <div class="performance-metrics">
+                <div class="metric">
+                    <div class="metric-bar">
+                        <div class="metric-fill" data-width="98"></div>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">Speed Score</span>
+                        <span class="metric-value">98/100</span>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-bar">
+                        <div class="metric-fill" data-width="99"></div>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">Uptime</span>
+                        <span class="metric-value">99.9%</span>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-bar">
+                        <div class="metric-fill" data-width="95"></div>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">Customer Satisfaction</span>
+                        <span class="metric-value">95%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="performance-visual reveal">
+            <div class="globe">
+                <div class="globe-inner"></div>
+                <div class="ping ping-1"></div>
+                <div class="ping ping-2"></div>
+                <div class="ping ping-3"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section class="container section pricing-section">
+    <h2 class="section-title reveal">Choose Your Perfect Plan</h2>
+    <p class="section-subtitle reveal">30-day money-back guarantee • Free migration • Cancel anytime</p>
+    
+    <div class="pricing-toggle reveal">
+        <span class="toggle-label">Monthly</span>
+        <label class="toggle">
+            <input type="checkbox" id="pricingToggle">
+            <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Yearly <span class="discount">Save 20%</span></span>
+    </div>
+
+    <div class="pricing-grid">
+        <div class="pricing-card basic reveal">
+            <div class="plan-header">
+                <h3>Basic</h3>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount monthly">3</span>
+                    <span class="amount yearly" style="display:none">29</span>
+                    <span class="period monthly">/mo</span>
+                    <span class="period yearly" style="display:none">/year</span>
+                </div>
+                <p class="plan-description">Perfect for personal websites</p>
+            </div>
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> 1 Website</li>
+                <li><i class="fas fa-check"></i> 10 GB SSD Storage</li>
+                <li><i class="fas fa-check"></i> Free SSL Certificate</li>
+                <li><i class="fas fa-check"></i> Basic Support</li>
+                <li><i class="fas fa-check"></i> 99.9% Uptime</li>
+            </ul>
+            <a href="{% url 'plans' %}" class="btn-plan">Get Started</a>
+        </div>
+
+        <div class="pricing-card pro popular reveal">
+            <div class="popular-badge">Most Popular</div>
+            <div class="plan-header">
+                <h3>Pro</h3>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount monthly">8</span>
+                    <span class="amount yearly" style="display:none">77</span>
+                    <span class="period monthly">/mo</span>
+                    <span class="period yearly" style="display:none">/year</span>
+                </div>
+                <p class="plan-description">Great for small businesses</p>
+            </div>
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> 5 Websites</li>
+                <li><i class="fas fa-check"></i> 50 GB SSD Storage</li>
+                <li><i class="fas fa-check"></i> Free SSL & CDN</li>
+                <li><i class="fas fa-check"></i> Priority Support</li>
+                <li><i class="fas fa-check"></i> Daily Backups</li>
+                <li><i class="fas fa-check"></i> Email Accounts</li>
+            </ul>
+            <a href="{% url 'plans' %}" class="btn-plan">Get Started</a>
+        </div>
+
+        <div class="pricing-card business reveal">
+            <div class="plan-header">
+                <h3>Business</h3>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount monthly">15</span>
+                    <span class="amount yearly" style="display:none">144</span>
+                    <span class="period monthly">/mo</span>
+                    <span class="period yearly" style="display:none">/year</span>
+                </div>
+                <p class="plan-description">For growing businesses</p>
+            </div>
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Unlimited Websites</li>
+                <li><i class="fas fa-check"></i> 200 GB SSD Storage</li>
+                <li><i class="fas fa-check"></i> Free Domain Included</li>
+                <li><i class="fas fa-check"></i> 24/7 Phone Support</li>
+                <li><i class="fas fa-check"></i> Advanced Security</li>
+                <li><i class="fas fa-check"></i> Free Migration</li>
+                <li><i class="fas fa-check"></i> Performance Optimization</li>
+            </ul>
+            <a href="{% url 'plans' %}" class="btn-plan">Get Started</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="section-title reveal">What Our Clients Say</h2>
+        <div class="testimonials-slider">
+            <div class="testimonial-card active reveal">
+                <div class="testimonial-content">
+                    <div class="stars">★★★★★</div>
+                    <p>"Hostify has been incredible. My site loads instantly and I've never experienced downtime. Their support team is always helpful and responds quickly."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JD</div>
+                    <div class="author-info">
+                        <strong>John Doe</strong>
+                        <span>E-commerce Store Owner</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal">
+                <div class="testimonial-content">
+                    <div class="stars">★★★★★</div>
+                    <p>"Switched to Hostify last year and couldn't be happier. Zero downtime, fantastic speeds, and the migration was completely free and seamless."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SS</div>
+                    <div class="author-info">
+                        <strong>Sarah Smith</strong>
+                        <span>Digital Marketing Agency</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal">
+                <div class="testimonial-content">
+                    <div class="stars">★★★★★</div>
+                    <p>"Best hosting provider I've used in 10+ years. Great performance, reliable service, and their control panel is so easy to use. Highly recommended!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">AB</div>
+                    <div class="author-info">
+                        <strong>Alex Brown</strong>
+                        <span>Web Developer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-nav">
+            <button class="nav-dot active"></button>
+            <button class="nav-dot"></button>
+            <button class="nav-dot"></button>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="container section faq-section">
+    <h2 class="section-title reveal">Frequently Asked Questions</h2>
+    <div class="faq-container reveal">
+        <div class="faq-item">
+            <button class="faq-question">
+                <span>How quickly can I get started?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                <p>Your hosting account will be activated instantly after payment. You'll receive login credentials within minutes and can start uploading your website immediately.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question">
+                <span>Can I upgrade my plan later?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                <p>Absolutely! You can upgrade your plan anytime from your control panel. The upgrade is instant and you'll only pay the prorated difference.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question">
+                <span>Do you offer refunds?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                <p>Yes, we offer a 30-day money-back guarantee. If you're not satisfied within the first 30 days, we'll refund your payment in full.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question">
+                <span>Is free website migration included?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                <p>Yes! We provide free website migration for all plans. Our migration experts will transfer your website with zero downtime.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question">
+                <span>What kind of support do you provide?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                <p>We offer 24/7 support via live chat, email, and phone. Our average response time is under 2 minutes for chat and 30 minutes for email.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter-section reveal">
+    <div class="container">
+        <div class="newsletter-content">
+            <h2>Stay Updated with Hostify</h2>
+            <p>Get the latest hosting tips, exclusive discounts, and industry insights delivered to your inbox.</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <div class="input-group">
+                    <input type="email" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn-primary">
+                        <span>Subscribe</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <p class="newsletter-note">🔒 We respect your privacy. Unsubscribe at any time.</p>
+            </form>
+        </div>
+        <div class="newsletter-visual">
+            <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+                <div class="pulse-ring"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="cta-section reveal">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Get Started?</h2>
+            <p>Join thousands of satisfied customers who trust Hostify with their web hosting needs. Our team is ready to help you launch your website today.</p>
+            <div class="cta-actions">
+                <a href="{% url 'plans' %}" class="btn-primary">Choose Your Plan</a>
+                <a href="{% url 'contact' %}" class="btn-secondary">Talk to Sales</a>
+            </div>
+            <div class="cta-guarantee">
+                <i class="fas fa-shield-alt"></i>
+                <span>30-day money-back guarantee</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Enhanced CSS -->
+<style>
+/* Reset and Base */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+
+/* Layout */
+.container { max-width: 1200px; margin: auto; padding: 0 20px; }
+.section { margin: 120px 0; }
+.section-title { text-align: center; margin-bottom: 20px; font-size: 2.5rem; font-weight: 700; }
+.section-subtitle { text-align: center; margin-bottom: 60px; font-size: 1.1rem; color: #666; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+/* Hero Section */
+.hero { 
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    overflow: hidden;
+}
+
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.particles::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: float 20s linear infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-100px) rotate(360deg); }
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 600px;
+    z-index: 2;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.hero h1 { 
+    font-size: 3.5rem; 
+    font-weight: 800; 
+    margin-bottom: 24px; 
+    line-height: 1.2;
+}
+
+.hero p { 
+    font-size: 1.3rem; 
+    margin-bottom: 40px; 
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.hero-stats .stat {
+    text-align: center;
+}
+
+.hero-stats .stat strong {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.hero-stats .stat span {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.server-illustration {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+
+.server {
+    position: absolute;
+    width: 60px;
+    height: 80px;
+    background: linear-gradient(145deg, #f0f0f0, #c8c8c8);
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.3);
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.server::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    height: 8px;
+    background: #4CAF50;
+    border-radius: 4px;
+    animation: blink 3s infinite;
+}
+
+.server-1 { top: 50px; left: 50px; animation-delay: 0s; }
+.server-2 { top: 120px; right: 50px; animation-delay: 0.5s; }
+.server-3 { bottom: 50px; left: 120px; animation-delay: 1s; }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.3; }
+}
+
+/* Trust Badges */
+.trust-badges {
+    background: #f8f9fa;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.trust-badges p {
+    margin-bottom: 30px;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.badges {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    background: #fff;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    transition: transform 0.3s ease;
+}
+
+.badge:hover {
+    transform: translateY(-2px);
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+}
+
+.feature-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+.feature-icon i {
+    font-size: 3rem;
+    color: #667eea;
+    z-index: 2;
+    position: relative;
+}
+
+.icon-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea20, #764ba220);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+.feature-card p {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.feature-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.stat-number {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Performance Section */
+.performance-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    padding: 100px 0;
+    position: relative;
+}
+
+.performance-section .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.performance-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.performance-content p {
+    font-size: 1.2rem;
+    margin-bottom: 50px;
+    opacity: 0.9;
+}
+
+.performance-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.metric-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.metric-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
+    border-radius: 4px;
+    width: 0;
+    transition: width 2s ease;
+    animation: fillBar 2s ease forwards;
+}
+
+.metric-fill[data-width="98"] { animation-delay: 0.5s; }
+.metric-fill[data-width="99"] { animation-delay: 1s; }
+.metric-fill[data-width="95"] { animation-delay: 1.5s; }
+
+@keyframes fillBar {
+    to { width: var(--width, 0%); }
+}
+
+.metric-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.metric-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.performance-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.globe {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.globe-inner {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ping {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffd700;
+    animation: ping 2s infinite;
+}
+
+.ping-1 { top: 20px; right: 30px; animation-delay: 0s; }
+.ping-2 { bottom: 40px; left: 20px; animation-delay: 0.7s; }
+.ping-3 { top: 80px; left: -10px; animation-delay: 1.4s; }
+
+@keyframes ping {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Pricing Section */
+.pricing-section {
+    background: #f8f9fa;
+    padding: 100px 0;
+    border-radius: 30px;
+    margin: 120px 0;
+}
+
+.pricing-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 60px;
+}
+
+.toggle-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.discount {
+    background: #28a745;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-left: 8px;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccc;
+    border-radius: 30px;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background: #667eea;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.pricing-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 2px solid #f0f0f0;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.pricing-card.popular {
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 8px 24px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.plan-header {
+    margin-bottom: 40px;
+}
+
+.plan-header h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.price {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    margin: 20px 0;
+}
+
+.currency {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.amount {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #333;
+}
+
+.period {
+    font-size: 1.2rem;
+    color: #666;
+    margin-left: 5px;
+}
+
+.plan-description {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.plan-features {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.plan-features li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.plan-features li:last-child {
+    border-bottom: none;
+}
+
+.plan-features .fa-check {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.btn-plan {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-plan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+}
+
+/* Testimonials */
+.testimonials-section {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #fff;
+    padding: 100px 0;
+    position: relative;
+}
+
+.testimonials-slider {
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+}
+
+.testimonial-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: none;
+}
+
+.testimonial-card.active {
+    display: block;
+}
+
+.stars {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #ffd700;
+}
+
+.testimonial-content p {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.author-info strong {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.author-info span {
+    opacity: 0.8;
+    font-size: 1rem;
+}
+
+.testimonial-nav {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.nav-dot.active,
+.nav-dot:hover {
+    background: #fff;
+}
+
+/* FAQ Section */
+.faq-section {
+    background: #fff;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.faq-question {
+    width: 100%;
+    padding: 25px 30px;
+    background: #fff;
+    border: none;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+    background: #f8f9fa;
+}
+
+.faq-question i {
+    transition: transform 0.3s ease;
+    color: #667eea;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: #f8f9fa;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+}
+
+.faq-answer p {
+    padding: 25px 30px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Newsletter Section */
+.newsletter-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 100px 0;
+    position: relative;
+}
+
+.newsletter-section .container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.newsletter-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.newsletter-content p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.newsletter-form {
+    max-width: 500px;
+}
+
+.input-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.input-group input {
+    flex: 1;
+    min-width: 280px;
+    padding: 16px 24px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.input-group input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.input-group button {
+    padding: 16px 30px;
+    background: #ffd700;
+    color: #333;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.input-group button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,215,0,0.3);
+}
+
+.newsletter-note {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.newsletter-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.email-icon {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+}
+
+.email-icon i {
+    font-size: 3rem;
+    color: #ffd700;
+}
+
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(255,215,0,0.3);
+    border-radius: 50%;
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 3rem;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.cta-content p {
+    font-size: 1.3rem;
+    margin-bottom: 50px;
+    opacity: 0.9;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.cta-guarantee {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.8;
+}
+
+.cta-guarantee i {
+    color: #28a745;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-3px);
+}
+
+/* Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 80px 20px;
+    }
+    
+    .hero-content {
+        margin-bottom: 60px;
+    }
+    
+    .performance-section .container,
+    .newsletter-section .container {
+        grid-template-columns: 1fr;
+        gap: 60px;
+        text-align: center;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.5rem; }
+    .section-title { font-size: 2rem; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .hero-stats { justify-content: center; }
+    .badges { flex-direction: column; align-items: center; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card.popular { transform: none; }
+    .cta-content h2 { font-size: 2.2rem; }
+    .input-group { flex-direction: column; }
+    .input-group input { min-width: auto; }
+}
+
+@media (max-width: 480px) {
+    .container { padding: 0 15px; }
+    .hero { padding: 60px 15px; }
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1.1rem; }
+    .feature-card, .pricing-card { padding: 30px 20px; }
+    .section { margin: 80px 0; }
+}
+</style>
+
+<!-- Enhanced JavaScript -->
+<script>
+// Scroll Animation
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Pricing Toggle
+document.getElementById('pricingToggle').addEventListener('change', function() {
+    const monthlyElements = document.querySelectorAll('.monthly');
+    const yearlyElements = document.querySelectorAll('.yearly');
+    
+    if (this.checked) {
+        monthlyElements.forEach(el => el.style.display = 'none');
+        yearlyElements.forEach(el => el.style.display = 'inline');
+    } else {
+        monthlyElements.forEach(el => el.style.display = 'inline');
+        yearlyElements.forEach(el => el.style.display = 'none');
+    }
+});
+
+// Performance Metrics Animation
+const metricFills = document.querySelectorAll('.metric-fill');
+const metricsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const fill = entry.target;
+            const width = fill.getAttribute('data-width');
+            fill.style.setProperty('--width', width + '%');
+        }
+    });
+}, { threshold: 0.5 });
+
+metricFills.forEach(fill => metricsObserver.observe(fill));
+
+// Testimonial Slider
+let currentTestimonial = 0;
+const testimonials = document.querySelectorAll('.testimonial-card');
+const dots = document.querySelectorAll('.nav-dot');
+
+function showTestimonial(index) {
+    testimonials.forEach((testimonial, i) => {
+        testimonial.classList.toggle('active', i === index);
+    });
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
+}
+
+dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+        currentTestimonial = index;
+        showTestimonial(currentTestimonial);
+    });
+});
+
+// Auto-rotate testimonials
+setInterval(() => {
+    currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+    showTestimonial(currentTestimonial);
+}, 5000);
+
+// FAQ Accordion
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+        const faqItem = question.parentElement;
+        const wasActive = faqItem.classList.contains('active');
+        
+        // Close all FAQ items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Open clicked item if it wasn't active
+        if (!wasActive) {
+            faqItem.classList.add('active');
+        }
+    });
+});
+
+// Newsletter Form
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const button = this.querySelector('button');
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
+    button.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check"></i> Subscribed!';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+            this.reset();
+        }, 2000);
+    }, 1500);
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add floating particles to hero
+function createParticle() {
+    const particle = document.createElement('div');
+    particle.style.position = 'absolute';
+    particle.style.width = Math.random() * 4 + 2 + 'px';
+    particle.style.height = particle.style.width;
+    particle.style.background = 'rgba(255,255,255,0.6)';
+    particle.style.borderRadius = '50%';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = '100%';
+    particle.style.pointerEvents = 'none';
+    particle.style.animation = `float-up ${Math.random() * 3 + 2}s linear infinite`;
+    
+    document.getElementById('particles').appendChild(particle);
+    
+    setTimeout(() => {
+        particle.remove();
+    }, 5000);
+}
+
+// Add floating animation keyframes
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes float-up {
+        to {
+            transform: translateY(-100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Create particles periodically
+setInterval(createParticle, 300);
+
+// Parallax effect for hero
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const parallax = document.querySelector('.hero');
+    if (parallax && scrolled < parallax.offsetHeight) {
+        parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+</script>
+
+{% endblock %}

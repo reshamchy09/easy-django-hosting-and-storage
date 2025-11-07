@@ -1,0 +1,503 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Quick Stats -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <!-- Total Sites -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{{ total_sites|default:"0" }}</h3>
+                <p style="margin: 5px 0 0; opacity: 0.9; font-size: 1rem;">Total Sites</p>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">🌐</div>
+        </div>
+    </div>
+
+    <!-- Static Websites -->
+    <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{{ websites.count|default:"0" }}</h3>
+                <p style="margin: 5px 0 0; opacity: 0.9; font-size: 1rem;">Static Sites</p>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">📄</div>
+        </div>
+    </div>
+
+    <!-- Active Sites -->
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{{ active_sites|default:"0" }}</h3>
+                <p style="margin: 5px 0 0; opacity: 0.9; font-size: 1rem;">Active Sites</p>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">✅</div>
+        </div>
+    </div>
+
+    <!-- Django Projects -->
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{{ django_projects.count|default:"0" }}</h3>
+                <p style="margin: 5px 0 0; opacity: 0.9; font-size: 1rem;">Django Apps</p>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">🐍</div>
+        </div>
+    </div>
+
+    <!-- Storage Usage -->
+    <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{{ total_storage|default:"0" }}MB</h3>
+                <p style="margin: 5px 0 0; opacity: 0.8; font-size: 1rem;">Storage Used</p>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">💾</div>
+        </div>
+    </div>
+
+    <!-- This Month Deployments -->
+    <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{{ this_month_deployments|default:"0" }}</h3>
+                <p style="margin: 5px 0 0; opacity: 0.8; font-size: 1rem;">This Month</p>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">📈</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Bar -->
+<div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <h3 style="margin: 0; color: #333;">Quick Actions</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{% url 'deploy_static' %}" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                📄 Deploy Static Site
+            </a>
+            <a href="{% url 'deploy_django' %}" style="background: #007bff; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                🐍 Deploy Django App
+            </a>
+            <a href="#" onclick="refreshDashboard()" style="background: #17a2b8; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                🔄 Refresh
+            </a>
+            <a href="{% url 'reports' %}" style="background: #6c757d; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                📊 View Reports
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px;">
+    <!-- Recent Activity -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0; color: #333;">Recent Activity</h3>
+            <a href="#" style="color: #007bff; font-size: 0.9rem;">View All</a>
+        </div>
+        
+        <div style="max-height: 400px; overflow-y: auto;">
+            {% if recent_deployments %}
+                {% for deployment in recent_deployments|slice:":8" %}
+                <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f3f4;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: {% if deployment.project_name %}#007bff{% else %}#28a745{% endif %}; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px;">
+                        {% if deployment.project_name %}🐍{% else %}📄{% endif %}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #333;">
+                            {% if deployment.project_name %}{{ deployment.project_name }}{% else %}{{ deployment.title }}{% endif %}
+                        </div>
+                        <div style="font-size: 0.875rem; color: #6c757d;">
+                            Deployed {{ deployment.created_at|timesince }} ago
+                        </div>
+                    </div>
+                    <div>
+                        {% if deployment.is_active %}
+                            <span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">Active</span>
+                        {% else %}
+                            <span style="background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: #6c757d; padding: 60px 0;">
+                    <div style="font-size: 4rem; margin-bottom: 15px;">📭</div>
+                    <p style="font-size: 1.1rem; margin-bottom: 10px;">No recent activity</p>
+                    <p style="font-size: 0.9rem;">Deploy your first project to see activity here</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- System Status & Charts -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- System Status -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; color: #333;">System Status</h4>
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.85rem;">Web Server</span>
+                    <span style="color: #28a745; font-size: 0.85rem;">● Online</span>
+                </div>
+                <div style="background: #f8f9fa; height: 4px; border-radius: 2px; overflow: hidden;">
+                    <div style="background: #28a745; width: 99%; height: 100%;"></div>
+                </div>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.85rem;">Database</span>
+                    <span style="color: #28a745; font-size: 0.85rem;">● Connected</span>
+                </div>
+                <div style="background: #f8f9fa; height: 4px; border-radius: 2px; overflow: hidden;">
+                    <div style="background: #28a745; width: 97%; height: 100%;"></div>
+                </div>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.85rem;">Storage</span>
+                    <span style="color: #ffc107; font-size: 0.85rem;">● 75% Used</span>
+                </div>
+                <div style="background: #f8f9fa; height: 4px; border-radius: 2px; overflow: hidden;">
+                    <div style="background: #ffc107; width: 75%; height: 100%;"></div>
+                </div>
+            </div>
+            <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.85rem;">Memory</span>
+                    <span style="color: #28a745; font-size: 0.85rem;">● 45% Used</span>
+                </div>
+                <div style="background: #f8f9fa; height: 4px; border-radius: 2px; overflow: hidden;">
+                    <div style="background: #28a745; width: 45%; height: 100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Chart -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; color: #333;">Weekly Deployments</h4>
+            <div style="position: relative; height: 150px;">
+                <canvas id="weeklyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Project Types Distribution -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; color: #333;">Project Types</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 12px; height: 12px; background: #007bff; border-radius: 50%; margin-right: 8px;"></div>
+                    <span style="font-size: 0.85rem;">Django</span>
+                </div>
+                <span style="font-weight: 600; color: #007bff;">{{ django_projects.count|default:"0" }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 12px; height: 12px; background: #28a745; border-radius: 50%; margin-right: 8px;"></div>
+                    <span style="font-size: 0.85rem;">Static</span>
+                </div>
+                <span style="font-weight: 600; color: #28a745;">{{ websites.count|default:"0" }}</span>
+            </div>
+            <div style="position: relative; height: 100px; margin-top: 15px;">
+                <canvas id="projectTypesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Projects Table -->
+<div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0; color: #333;">Recent Projects</h3>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="filterProjects('all')" class="filter-btn active" style="padding: 6px 12px; border: 1px solid #ddd; background: #007bff; color: white; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">All</button>
+            <button onclick="filterProjects('django')" class="filter-btn" style="padding: 6px 12px; border: 1px solid #ddd; background: white; color: #333; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Django</button>
+            <button onclick="filterProjects('static')" class="filter-btn" style="padding: 6px 12px; border: 1px solid #ddd; background: white; color: #333; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Static</button>
+        </div>
+    </div>
+    
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+                <tr style="background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+                    <th style="padding: 12px; text-align: left; font-weight: 600;">Project</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 600;">Type</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 600;">Status</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 600;">Domain</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 600;">Last Updated</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 600;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="projectsTable">
+                {% for project in recent_projects|slice:":10" %}
+                <tr style="border-bottom: 1px solid #e9ecef;" data-type="{% if project.project_name %}django{% else %}static{% endif %}">
+                    <td style="padding: 12px; font-weight: 600; color: #333;">
+                        {% if project.project_name %}{{ project.project_name }}{% else %}{{ project.title }}{% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if project.project_name %}
+                            <span style="background: #007bff; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">Django</span>
+                        {% else %}
+                            <span style="background: #28a745; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">Static</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if project.is_active %}
+                            <span style="color: #28a745;">● Active</span>
+                        {% else %}
+                            <span style="color: #dc3545;">● Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if project.domain_name %}
+                            <a href="{{ project.domain_name }}" target="_blank" style="color: #007bff; text-decoration: none;">
+                                {{ project.domain_name|slice:":25" }}{% if project.domain_name|length > 25 %}...{% endif %}
+                            </a>
+                        {% else %}
+                            <span style="color: #6c757d;">-</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; color: #6c757d;">
+                        {{ project.updated_at|date:"M d, Y"|default:project.created_at|date:"M d, Y" }}
+                    </td>
+                    <td style="padding: 12px;">
+                        <div style="display: flex; gap: 5px;">
+                            {% if project.domain_name %}
+                                <a href="{{ project.domain_name }}" target="_blank" style="color: #007bff; font-size: 0.8rem; padding: 4px 8px; border: 1px solid #007bff; border-radius: 4px; text-decoration: none;">View</a>
+                            {% endif %}
+                            <a href="#" style="color: #6c757d; font-size: 0.8rem; padding: 4px 8px; border: 1px solid #6c757d; border-radius: 4px; text-decoration: none;">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 40px; text-align: center; color: #6c757d;">
+                        No projects found. <a href="{% url 'deploy_static' %}" style="color: #007bff;">Deploy your first project</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- News & Tips -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <!-- Tips & Tricks -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">💡 Tips & Tricks</h3>
+        <div style="space-y: 15px;">
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px;">
+                <h5 style="margin: 0 0 8px; color: #333;">Optimize Your Static Sites</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #6c757d;">Compress images and minify CSS/JS files before deployment to improve loading speeds.</p>
+            </div>
+            <div style="padding: 15px; background: #e3f2fd; border-radius: 8px; margin-bottom: 15px;">
+                <h5 style="margin: 0 0 8px; color: #1976d2;">Django Best Practices</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #1565c0;">Always set DEBUG=False and use environment variables for sensitive settings in production.</p>
+            </div>
+            <div style="padding: 15px; background: #e8f5e8; border-radius: 8px;">
+                <h5 style="margin: 0 0 8px; color: #388e3c;">Backup Your Projects</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #2e7d32;">Regularly backup your project files and database to prevent data loss.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">📈 Performance</h3>
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="font-weight: 600;">Average Load Time</span>
+                <span style="color: #28a745;">1.2s</span>
+            </div>
+            <div style="background: #f8f9fa; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: #28a745; width: 85%; height: 100%;"></div>
+            </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="font-weight: 600;">Success Rate</span>
+                <span style="color: #28a745;">99.8%</span>
+            </div>
+            <div style="background: #f8f9fa; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: #28a745; width: 99%; height: 100%;"></div>
+            </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="font-weight: 600;">Uptime</span>
+                <span style="color: #28a745;">99.9%</span>
+            </div>
+            <div style="background: #f8f9fa; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: #28a745; width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #28a745; margin-bottom: 5px;">A+</div>
+            <div style="font-size: 0.9rem; color: #6c757d;">Overall Performance Score</div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Weekly deployments chart
+    const weeklyCanvas = document.getElementById('weeklyChart');
+    if (weeklyCanvas) {
+        const ctx1 = weeklyCanvas.getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Deployments',
+                    data: [{{ weekly_deployments|default:"[3,5,2,8,4,1,2]"|safe }}],
+                    backgroundColor: 'rgba(0,123,255,0.8)',
+                    borderColor: '#007bff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // Project types doughnut chart
+    const typesCanvas = document.getElementById('projectTypesChart');
+    if (typesCanvas) {
+        const ctx2 = typesCanvas.getContext('2d');
+        const djangoCount = parseInt('{{ django_projects.count|default:"0" }}') || 0;
+        const staticCount = parseInt('{{ websites.count|default:"0" }}') || 0;
+        
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Django', 'Static'],
+                datasets: [{
+                    data: [djangoCount, staticCount],
+                    backgroundColor: ['#007bff', '#28a745'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+});
+
+function filterProjects(type) {
+    const rows = document.querySelectorAll('#projectsTable tr[data-type]');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Update button states
+    buttons.forEach(btn => {
+        btn.style.background = 'white';
+        btn.style.color = '#333';
+        btn.classList.remove('active');
+    });
+    event.target.style.background = '#007bff';
+    event.target.style.color = 'white';
+    event.target.classList.add('active');
+    
+    // Filter rows
+    rows.forEach(row => {
+        const rowType = row.getAttribute('data-type');
+        if (type === 'all' || rowType === type) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function refreshDashboard() {
+    // Show loading state
+    const refreshBtn = event.target;
+    const originalText = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '🔄 Refreshing...';
+    refreshBtn.style.opacity = '0.7';
+    
+    // Simulate refresh (replace with actual reload or AJAX call)
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+</script>
+
+<style>
+/* Hover effects */
+table tr:hover { background-color: #f8f9fa; }
+.filter-btn:hover { background-color: #f8f9fa !important; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    div[style*="grid-template-columns: 2fr 1fr"],
+    div[style*="grid-template-columns: 1fr 1fr"] { 
+        grid-template-columns: 1fr !important; 
+    }
+    
+    div[style*="display: flex"][style*="flex-wrap: wrap"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    div[style*="display: flex"][style*="gap: 10px"] a {
+        text-align: center;
+    }
+    
+    table { font-size: 0.8rem; }
+    th, td { padding: 8px !important; }
+}
+
+/* Smooth animations */
+* { transition: all 0.3s ease; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Card hover effects */
+div[style*="linear-gradient"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* Button hover effects */
+a[style*="background: #28a745"]:hover { background: #218838 !important; }
+a[style*="background: #007bff"]:hover { background: #0056b3 !important; }
+a[style*="background: #17a2b8"]:hover { background: #138496 !important; }
+a[style*="background: #6c757d"]:hover { background: #545b62 !important; }
+
+/* Loading animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading { animation: spin 1s linear infinite; }
+</style>
+
+{% endblock %}

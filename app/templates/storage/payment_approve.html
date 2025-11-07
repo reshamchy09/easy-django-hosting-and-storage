@@ -1,0 +1,125 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Payment Approved{% endblock %}
+
+{% block content %}
+<style>
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+.celebration-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+    flex-direction: column;
+    text-align: center;
+}
+
+.celebration-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    padding: 40px 60px;
+    animation: popIn 1s ease;
+    backdrop-filter: blur(10px);
+}
+
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.celebration-card h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #00ff99;
+    text-shadow: 0 0 15px #00ff99;
+    margin-bottom: 10px;
+}
+
+.celebration-card p {
+    font-size: 1.1rem;
+    margin: 8px 0;
+    color: #e0e0e0;
+}
+
+.celebration-card strong { color: #fff; }
+
+.celebration-btn {
+    margin-top: 20px;
+    background: linear-gradient(45deg, #00ff99, #00b3ff);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
+    transition: all 0.3s ease;
+}
+
+.celebration-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 255, 170, 0.8);
+}
+
+.approved-badge {
+    background: #00ff99;
+    color: #000;
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Confetti Canvas */
+#confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+</style>
+
+<div class="celebration-container">
+    <div class="celebration-card">
+        <div class="approved-badge">✅ Approved</div>
+        <h1>Payment Successful 🎉</h1>
+        <p>Your storage upgrade request has been approved!</p>
+        <p><strong>GB Purchased:</strong> {{ payment_request.gb_requested }} GB</p>
+        <p><strong>Amount Paid:</strong> {{ payment_request.amount }} Rs</p>
+        <p><strong>Date:</strong> {{ payment_request.requested_at|date:"M d, Y H:i" }}</p>
+
+        <button class="celebration-btn" onclick="window.location.href='{% url 'upload_file' %}'">
+            Go to Uploads
+        </button>
+        <br><br>
+        <button class="celebration-btn" onclick="window.location.href='{% url 'payment_page' %}'">
+            Make a New Payment
+        </button>
+    </div>
+</div>
+
+<!-- Confetti Celebration -->
+<canvas id="confetti"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+const end = Date.now() + (4 * 1000);
+const colors = ['#00ff99', '#00b3ff', '#ff00ff', '#ffcc00'];
+
+(function frame() {
+    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+    if (Date.now() < end) requestAnimationFrame(frame);
+})();
+</script>
+{% endblock %}

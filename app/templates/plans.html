@@ -1,0 +1,1591 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hosting Plans | Hostify - Choose Your Perfect Plan{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="plans-hero">
+    <div class="container">
+        <div class="hero-content fade-in">
+            <h1>Choose Your Perfect Hosting Plan</h1>
+            <p>Scalable solutions designed to grow with your business. All plans include our 99.9% uptime guarantee and 24/7 support.</p>
+            
+            <!-- Billing Toggle -->
+            <div class="billing-toggle">
+                <span class="toggle-label">Monthly</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="billingToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">
+                    Annual 
+                    <span class="discount-badge">Save 25%</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Plans -->
+<section class="pricing-section">
+    <div class="container">
+        <!-- Shared Hosting Plans -->
+        <div class="plan-category fade-in">
+            <h2>Shared Hosting</h2>
+            <p>Perfect for personal websites, blogs, and small businesses</p>
+            
+            <div class="pricing-grid">
+                <!-- Starter Plan -->
+                <div class="pricing-card starter fade-in">
+                    <div class="plan-badge">Best for Beginners</div>
+                    <div class="plan-header">
+                        <div class="plan-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3>Starter</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">2.99</span>
+                            <span class="price yearly" style="display:none;">2.24</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Perfect for personal websites and blogs</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>1 Website</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>10 GB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>100 GB Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>5 Email Accounts</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Free SSL Certificate</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>24/7 Email Support</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>99.9% Uptime Guarantee</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Website Builder</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('starter')">
+                        <span>Choose Starter</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Professional Plan -->
+                <div class="pricing-card professional popular fade-in">
+                    <div class="plan-badge popular-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <div class="plan-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Professional</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">5.99</span>
+                            <span class="price yearly" style="display:none;">4.49</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Great for small to medium businesses</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>5 Websites</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>50 GB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>500 GB Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>25 Email Accounts</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Free SSL & CDN</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>24/7 Live Chat Support</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Daily Backups</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>WordPress Optimization</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Free Domain (1st Year)</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('professional')">
+                        <span>Choose Professional</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Business Plan -->
+                <div class="pricing-card business fade-in">
+                    <div class="plan-badge">Best Value</div>
+                    <div class="plan-header">
+                        <div class="plan-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>Business</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">9.99</span>
+                            <span class="price yearly" style="display:none;">7.49</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Perfect for growing businesses</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Unlimited Websites</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>100 GB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Unlimited Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Unlimited Email Accounts</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Free SSL & Premium CDN</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>24/7 Priority Support</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Automatic Daily Backups</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Advanced Security Suite</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Free Domain (Lifetime)</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Site Migration Service</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('business')">
+                        <span>Choose Business</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VPS Hosting Plans -->
+        <div class="plan-category fade-in">
+            <h2>VPS Hosting</h2>
+            <p>Dedicated resources and full control for demanding websites</p>
+            
+            <div class="pricing-grid">
+                <!-- VPS Basic -->
+                <div class="pricing-card vps-basic fade-in">
+                    <div class="plan-header">
+                        <div class="plan-icon vps">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3>VPS Basic</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">19.99</span>
+                            <span class="price yearly" style="display:none;">14.99</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Entry-level VPS with guaranteed resources</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>2 CPU Cores</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-memory"></i>
+                            <span>4 GB RAM</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>50 GB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-wifi"></i>
+                            <span>1 TB Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Root Access</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-sync"></i>
+                            <span>Weekly Backups</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-headset"></i>
+                            <span>24/7 Premium Support</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('vps-basic')">
+                        <span>Choose VPS Basic</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- VPS Pro -->
+                <div class="pricing-card vps-pro fade-in">
+                    <div class="plan-badge">Recommended</div>
+                    <div class="plan-header">
+                        <div class="plan-icon vps">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3>VPS Pro</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">39.99</span>
+                            <span class="price yearly" style="display:none;">29.99</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">High-performance VPS for demanding applications</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>4 CPU Cores</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-memory"></i>
+                            <span>8 GB RAM</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>100 GB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-wifi"></i>
+                            <span>2 TB Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Full Root Access</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-sync"></i>
+                            <span>Daily Backups</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-headset"></i>
+                            <span>Priority Support</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Performance Monitoring</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('vps-pro')">
+                        <span>Choose VPS Pro</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- VPS Enterprise -->
+                <div class="pricing-card vps-enterprise fade-in">
+                    <div class="plan-header">
+                        <div class="plan-icon vps">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3>VPS Enterprise</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">79.99</span>
+                            <span class="price yearly" style="display:none;">59.99</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Maximum performance for enterprise applications</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>8 CPU Cores</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-memory"></i>
+                            <span>16 GB RAM</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>200 GB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-wifi"></i>
+                            <span>5 TB Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Full Root Access</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-sync"></i>
+                            <span>Real-time Backups</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-headset"></i>
+                            <span>Dedicated Support</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-fire"></i>
+                            <span>Advanced Firewall</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Advanced Analytics</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('vps-enterprise')">
+                        <span>Choose VPS Enterprise</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dedicated Hosting -->
+        <div class="plan-category fade-in">
+            <h2>Dedicated Servers</h2>
+            <p>Ultimate performance with dedicated hardware resources</p>
+            
+            <div class="pricing-grid">
+                <!-- Dedicated Standard -->
+                <div class="pricing-card dedicated-standard fade-in">
+                    <div class="plan-header">
+                        <div class="plan-icon dedicated">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Dedicated Standard</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">149.99</span>
+                            <span class="price yearly" style="display:none;">112.49</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Powerful dedicated server for high-traffic sites</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>Intel Xeon E3-1240v6</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-memory"></i>
+                            <span>32 GB DDR4 RAM</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>1 TB SSD Storage</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-wifi"></i>
+                            <span>10 TB Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-network-wired"></i>
+                            <span>1 Gbps Port</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>DDoS Protection</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tools"></i>
+                            <span>Server Management</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('dedicated-standard')">
+                        <span>Choose Dedicated Standard</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Dedicated Premium -->
+                <div class="pricing-card dedicated-premium fade-in">
+                    <div class="plan-badge">High Performance</div>
+                    <div class="plan-header">
+                        <div class="plan-icon dedicated">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Dedicated Premium</h3>
+                        <div class="price-display">
+                            <span class="currency">$</span>
+                            <span class="price monthly">249.99</span>
+                            <span class="price yearly" style="display:none;">187.49</span>
+                            <span class="period">/mo</span>
+                        </div>
+                        <p class="plan-description">Enterprise-grade server for mission-critical applications</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>Intel Xeon E5-2620v4</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-memory"></i>
+                            <span>64 GB DDR4 RAM</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>2 TB NVMe SSD</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-wifi"></i>
+                            <span>Unlimited Bandwidth</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-network-wired"></i>
+                            <span>10 Gbps Port</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Advanced DDoS Protection</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tools"></i>
+                            <span>Fully Managed</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-phone"></i>
+                            <span>24/7 Phone Support</span>
+                        </div>
+                    </div>
+                    
+                    <button class="plan-button" onclick="selectPlan('dedicated-premium')">
+                        <span>Choose Dedicated Premium</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Comparison -->
+<section class="comparison-section">
+    <div class="container">
+        <h2 class="section-title fade-in">Compare All Features</h2>
+        <div class="comparison-table-wrapper fade-in">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Features</th>
+                        <th>Starter</th>
+                        <th>Professional</th>
+                        <th>Business</th>
+                        <th>VPS Basic</th>
+                        <th>VPS Pro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Websites</strong></td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td>Unlimited</td>
+                        <td>Unlimited</td>
+                        <td>Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storage</strong></td>
+                        <td>10 GB</td>
+                        <td>50 GB</td>
+                        <td>100 GB</td>
+                        <td>50 GB</td>
+                        <td>100 GB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bandwidth</strong></td>
+                        <td>100 GB</td>
+                        <td>500 GB</td>
+                        <td>Unlimited</td>
+                        <td>1 TB</td>
+                        <td>2 TB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email Accounts</strong></td>
+                        <td>5</td>
+                        <td>25</td>
+                        <td>Unlimited</td>
+                        <td>Unlimited</td>
+                        <td>Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Free SSL</strong></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Free Domain</strong></td>
+                        <td><i class="fas fa-times text-danger"></i></td>
+                        <td>1st Year</td>
+                        <td>Lifetime</td>
+                        <td><i class="fas fa-times text-danger"></i></td>
+                        <td><i class="fas fa-times text-danger"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Daily Backups</strong></td>
+                        <td><i class="fas fa-times text-danger"></i></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                        <td>Weekly</td>
+                        <td><i class="fas fa-check text-success"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Support</strong></td>
+                        <td>Email</td>
+                        <td>Live Chat</td>
+                        <td>Priority</td>
+                        <td>Premium</td>
+                        <td>Priority</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title fade-in">Frequently Asked Questions</h2>
+        <div class="faq-container fade-in">
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Can I upgrade my plan at any time?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes! You can upgrade your hosting plan at any time. The upgrade is instant and you'll only pay the prorated difference for the remaining billing period.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>What's included in the 30-day money-back guarantee?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>If you're not completely satisfied with our hosting service within the first 30 days, we'll refund your hosting fees in full. Domain registration fees are non-refundable.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Do you provide free website migration?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes! We offer free website migration for all our hosting plans. Our migration experts will transfer your website with zero downtime, typically within 24-48 hours.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>What type of support do you offer?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>We provide 24/7 support through multiple channels. Starter plans include email support, while higher plans get live chat and phone support with faster response times.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Are there any setup fees or hidden costs?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>No setup fees! The prices shown are exactly what you'll pay. There are no hidden costs or surprise charges. You only pay for optional add-ons if you choose them.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="plans-cta">
+    <div class="container">
+        <div class="cta-content fade-in">
+            <h2>Still Have Questions?</h2>
+            <p>Our hosting experts are here to help you choose the perfect plan for your needs.</p>
+            <div class="cta-actions">
+                <a href="{% url 'contact' %}" class="btn-secondary">
+                    <i class="fas fa-comments"></i>
+                    Talk to an Expert
+                </a>
+                <a href="#" class="btn-primary" onclick="startLiveChat()">
+                    <i class="fas fa-comment-dots"></i>
+                    Start Live Chat
+                </a>
+            </div>
+            <div class="guarantee-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>30-day money-back guarantee</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Plans Page Styles */
+.plans-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Billing Toggle */
+.billing-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.toggle-label {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.discount-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background: #ffd700;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+/* Pricing Section */
+.pricing-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.plan-category {
+    margin-bottom: 80px;
+}
+
+.plan-category:last-child {
+    margin-bottom: 0;
+}
+
+.plan-category h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.plan-category p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Pricing Cards */
+.pricing-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.pricing-card:hover::before {
+    transform: scaleX(1);
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.pricing-card.popular {
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.pricing-card.popular:hover {
+    transform: scale(1.05) translateY(-8px);
+}
+
+/* Plan Badges */
+.plan-badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.popular-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.plan-badge.popular-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+    0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+}
+
+/* Plan Header */
+.plan-header {
+    margin-bottom: 40px;
+}
+
+.plan-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px auto;
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.plan-icon.vps {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.plan-icon.dedicated {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.plan-icon i {
+    font-size: 2rem;
+    color: #fff;
+    z-index: 2;
+}
+
+.plan-icon::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.3));
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.plan-header h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.price-display {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    margin: 20px 0;
+}
+
+.currency {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #333;
+    line-height: 1;
+}
+
+.period {
+    font-size: 1.2rem;
+    color: #666;
+    margin-left: 5px;
+}
+
+.plan-description {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 15px 0;
+}
+
+/* Plan Features */
+.plan-features {
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.feature:last-child {
+    border-bottom: none;
+}
+
+.feature:hover {
+    background: rgba(102, 126, 234, 0.05);
+    margin: 0 -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 8px;
+}
+
+.feature i {
+    color: #28a745;
+    font-weight: 600;
+    width: 16px;
+}
+
+.feature span {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Plan Buttons */
+.plan-button {
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.plan-button:hover::before {
+    left: 100%;
+}
+
+.plan-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.plan-button:active {
+    transform: translateY(0);
+}
+
+/* Comparison Table */
+.comparison-section {
+    padding: 80px 0;
+    background: #fff;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 50px;
+    color: #333;
+}
+
+.comparison-table-wrapper {
+    overflow-x: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    min-width: 800px;
+}
+
+.comparison-table th {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 20px 15px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.comparison-table th:first-child {
+    text-align: left;
+    border-radius: 15px 0 0 0;
+}
+
+.comparison-table th:last-child {
+    border-radius: 0 15px 0 0;
+}
+
+.comparison-table td {
+    padding: 18px 15px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 1rem;
+    transition: background 0.2s ease;
+}
+
+.comparison-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    background: #f8f9fa;
+}
+
+.comparison-table tr:hover td {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.faq-question {
+    width: 100%;
+    padding: 25px 30px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.faq-question i {
+    color: #667eea;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: #f8f9fa;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+    padding: 25px 30px;
+}
+
+.faq-answer p {
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* CTA Section */
+.plans-cta {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.cta-content p {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+}
+
+.guarantee-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.8;
+    font-size: 1rem;
+}
+
+.guarantee-badge i {
+    color: #28a745;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+    
+    .billing-toggle {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+    
+    .pricing-card.popular {
+        transform: none;
+    }
+    
+    .pricing-card.popular:hover {
+        transform: translateY(-8px);
+    }
+    
+    .plan-category h2 {
+        font-size: 2rem;
+    }
+    
+    .comparison-table-wrapper {
+        border-radius: 10px;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 2rem;
+    }
+    
+    .cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-primary, .btn-secondary {
+        min-width: 200px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .pricing-section {
+        padding: 60px 0;
+    }
+    
+    .pricing-card {
+        padding: 30px 20px;
+    }
+    
+    .plan-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .plan-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .price {
+        font-size: 2.5rem;
+    }
+    
+    .faq-question,
+    .faq-answer p {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+/* Loading and Success States */
+.plan-button.loading {
+    pointer-events: none;
+}
+
+.plan-button.loading span {
+    opacity: 0;
+}
+
+.plan-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.success-message.show {
+    transform: translateX(0);
+}
+</style>
+
+<script>
+// Billing Toggle Functionality
+document.getElementById('billingToggle').addEventListener('change', function() {
+    const monthlyPrices = document.querySelectorAll('.price.monthly');
+    const yearlyPrices = document.querySelectorAll('.price.yearly');
+    
+    if (this.checked) {
+        // Switch to yearly pricing
+        monthlyPrices.forEach(price => price.style.display = 'none');
+        yearlyPrices.forEach(price => price.style.display = 'inline');
+    } else {
+        // Switch to monthly pricing
+        monthlyPrices.forEach(price => price.style.display = 'inline');
+        yearlyPrices.forEach(price => price.style.display = 'none');
+    }
+});
+
+// Plan Selection Function
+function selectPlan(planName) {
+    const button = event.target.closest('.plan-button');
+    const originalContent = button.innerHTML;
+    
+    // Add loading state
+    button.classList.add('loading');
+    
+    // Simulate plan selection process
+    setTimeout(() => {
+        button.classList.remove('loading');
+        
+        // Show success message
+        showSuccessMessage(`${planName} plan selected! Redirecting to checkout...`);
+        
+        // Simulate redirect to checkout
+        setTimeout(() => {
+            // In a real application, you would redirect to checkout
+            console.log(`Redirecting to checkout for ${planName} plan`);
+            // window.location.href = `/checkout/${planName}`;
+        }, 1500);
+        
+    }, 2000);
+}
+
+// Success Message Function
+function showSuccessMessage(message) {
+    // Remove existing success messages
+    const existingMessages = document.querySelectorAll('.success-message');
+    existingMessages.forEach(msg => msg.remove());
+    
+    // Create new success message
+    const successMessage = document.createElement('div');
+    successMessage.className = 'success-message';
+    successMessage.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(successMessage);
+    
+    // Show message
+    setTimeout(() => {
+        successMessage.classList.add('show');
+    }, 100);
+    
+    // Hide message after 4 seconds
+    setTimeout(() => {
+        successMessage.classList.remove('show');
+        setTimeout(() => {
+            successMessage.remove();
+        }, 300);
+    }, 4000);
+}
+
+// FAQ Functionality
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const faqItem = this.parentElement;
+        const wasActive = faqItem.classList.contains('active');
+        
+        // Close all FAQ items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Open clicked item if it wasn't active
+        if (!wasActive) {
+            faqItem.classList.add('active');
+        }
+    });
+});
+
+// Scroll Animation
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Live Chat Function
+function startLiveChat() {
+    // In a real application, this would open your live chat widget
+    alert('Live chat feature would be integrated here with your preferred chat solution (e.g., Intercom, Zendesk Chat, etc.)');
+}
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Price animation on hover
+document.querySelectorAll('.pricing-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        const price = this.querySelector('.price');
+        price.style.transform = 'scale(1.1)';
+        price.style.transition = 'transform 0.3s ease';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        const price = this.querySelector('.price');
+        price.style.transform = 'scale(1)';
+    });
+});
+
+// Add parallax effect to hero section
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const hero = document.querySelector('.plans-hero');
+    if (hero) {
+        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+
+// Dynamic pricing calculation
+function updatePricing() {
+    const isYearly = document.getElementById('billingToggle').checked;
+    const discountRate = 0.25; // 25% discount for yearly
+    
+    document.querySelectorAll('.pricing-card').forEach(card => {
+        const monthlyPrice = parseFloat(card.querySelector('.price.monthly').textContent);
+        const yearlyPrice = (monthlyPrice * (1 - discountRate)).toFixed(2);
+        card.querySelector('.price.yearly').textContent = yearlyPrice;
+    });
+}
+
+// Initialize pricing on page load
+updatePricing();
+</script>
+
+{% endblock %}

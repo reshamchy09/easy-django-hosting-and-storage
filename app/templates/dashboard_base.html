@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EasyHost Dashboard{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sidebar-header h2 {
+            color: #007bff;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section-title {
+            padding: 0 20px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6c757d;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 20px;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            color: #007bff;
+            border-left-color: #007bff;
+        }
+
+        .nav-item.active {
+            background: #e3f2fd;
+            color: #007bff;
+            border-left-color: #007bff;
+            font-weight: 600;
+        }
+
+        .nav-item-icon {
+            margin-right: 10px;
+            width: 20px;
+            display: inline-block;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: #ffffff;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            z-index: 1001;
+            border: 1px solid #e9ecef;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-content a:first-child {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .top-header {
+                padding: 15px 20px;
+            }
+
+            .page-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>EasyHost</h2>
+            </div>
+            
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <span class="nav-item-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'reports' %}" class="nav-item {% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
+                        <span class="nav-item-icon">📈</span>
+                        Reports
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">My Storage Data</div>
+                    <a href="{% url 'upload_file' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_django' %}active{% endif %}">
+                        <span class="nav-item-icon">💾</span>
+                        Upload File
+                    </a>
+                    <a href="{% url 'upload_list' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_static' %}active{% endif %}">
+                        <span class="nav-item-icon">📂</span>
+                        Files
+                    </a>
+                     <a href="{% url 'payment_page' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_static' %}active{% endif %}">
+                        <span class="nav-item-icon">💳</span>
+                        Payments
+                    </a>
+                      <a href="{% url 'storage_overview' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_static' %}active{% endif %}">
+                        <span class="nav-item-icon">☁️</span>
+                        Storage Overview
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Deployments</div>
+                    <a href="{% url 'deploy_django' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_django' %}active{% endif %}">
+                        <span class="nav-item-icon">⚡</span>
+                        Deploy Django
+                    </a>
+                    <a href="{% url 'deploy_static' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_static' %}active{% endif %}">
+                        <span class="nav-item-icon">🌐</span>
+                        Deploy Static
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">My Projects</div>
+                    <a href="{% url 'django_projects' %}" class="nav-item {% if request.resolver_match.url_name == 'django_projects' or request.resolver_match.url_name == 'django_project_detail' %}active{% endif %}">
+                        <span class="nav-item-icon">📱</span>
+                        Django Apps
+                    </a>
+                    <a href="{% url 'websites' %}" class="nav-item {% if request.resolver_match.url_name == 'websites' %}active{% endif %}">
+                        <span class="nav-item-icon">🌟</span>
+                        Static Sites
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Account</div>
+                    <a href="{% url 'settings' %}" class="nav-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                        <span class="nav-item-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a href="{% url 'help' %}" class="nav-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                        <span class="nav-item-icon">❓</span>
+                        Help & Support
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                    <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+                </div>
+                
+                <div class="header-right">
+                    <div class="dropdown">
+                        <div class="user-info" style="cursor: pointer;">
+                            <div class="user-avatar">{{ user.username|first|upper }}</div>
+                            <span style="font-weight: 500;">{{ user.username }}</span>
+                            <span style="margin-left: 5px;">▼</span>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="{% url 'settings' %}">Account Settings</a>
+                            <a href="{% url 'reports' %}">View Reports</a>
+                            <a href="#" style="border-top: 1px solid #e9ecef;">Help & Support</a>
+                            <a href="{% url 'logout' %}" style="color: #dc3545;">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+            });
+
+            // Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            });
+
+            // Close sidebar when clicking nav links on mobile
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                });
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

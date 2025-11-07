@@ -1,0 +1,428 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Account Settings{% endblock %}
+
+{% block page_title %}Account Settings{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px;">
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Account Information -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Account Information</h3>
+        
+        <form method="post" id="profile-form">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="profile">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label style="font-weight: 600; display: block; margin-bottom: 5px;">Username</label>
+                    <input type="text" name="username" value="{{ user.username }}" class="form-control" readonly style="background-color: #f8f9fa;">
+                    <small style="color: #6c757d;">Username cannot be changed</small>
+                </div>
+                
+                <div>
+                    <label for="email" style="font-weight: 600; display: block; margin-bottom: 5px;">Email Address</label>
+                    <input type="email" name="email" id="email" value="{{ user.email }}" class="form-control" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label for="first_name" style="font-weight: 600; display: block; margin-bottom: 5px;">First Name</label>
+                    <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" class="form-control">
+                </div>
+                
+                <div>
+                    <label for="last_name" style="font-weight: 600; display: block; margin-bottom: 5px;">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}" class="form-control">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="bio" style="font-weight: 600; display: block; margin-bottom: 5px;">Bio</label>
+                <textarea name="bio" id="bio" class="form-control" rows="3" placeholder="Tell us about yourself...">{{ user.profile.bio|default:'' }}</textarea>
+            </div>
+
+            <button type="submit" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                Update Profile
+            </button>
+        </form>
+    </div>
+
+    <!-- Change Password -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Change Password</h3>
+        
+        <form method="post" id="password-form">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="password">
+            
+            <div style="margin-bottom: 15px;">
+                <label for="current_password" style="font-weight: 600; display: block; margin-bottom: 5px;">Current Password</label>
+                <input type="password" name="current_password" id="current_password" class="form-control" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label for="new_password" style="font-weight: 600; display: block; margin-bottom: 5px;">New Password</label>
+                    <input type="password" name="new_password" id="new_password" class="form-control" required>
+                    <small style="color: #6c757d;">Minimum 8 characters</small>
+                </div>
+                
+                <div>
+                    <label for="confirm_password" style="font-weight: 600; display: block; margin-bottom: 5px;">Confirm New Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
+                </div>
+            </div>
+
+            <button type="submit" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                Change Password
+            </button>
+        </form>
+    </div>
+
+    <!-- Deployment Settings -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Deployment Preferences</h3>
+        
+        <form method="post" id="deployment-form">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="deployment">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 600; display: block; margin-bottom: 10px;">Default Domain Settings</label>
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <input type="checkbox" id="auto_https" name="auto_https" checked style="margin-right: 8px;">
+                    <label for="auto_https">Automatically enable HTTPS for deployments</label>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <input type="checkbox" id="custom_subdomain" name="custom_subdomain" style="margin-right: 8px;">
+                    <label for="custom_subdomain">Allow custom subdomains</label>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="default_memory" style="font-weight: 600; display: block; margin-bottom: 5px;">Default Memory Limit (MB)</label>
+                <select name="default_memory" id="default_memory" class="form-control">
+                    <option value="512">512 MB</option>
+                    <option value="1024" selected>1024 MB</option>
+                    <option value="2048">2048 MB</option>
+                    <option value="4096">4096 MB</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="notification_email" style="font-weight: 600; display: block; margin-bottom: 5px;">Notification Email</label>
+                <input type="email" name="notification_email" id="notification_email" value="{{ user.email }}" class="form-control">
+                <small style="color: #6c757d;">Receive deployment status notifications</small>
+            </div>
+
+            <button type="submit" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                Save Preferences
+            </button>
+        </form>
+    </div>
+
+    <!-- API Keys -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">API Access</h3>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>API Key:</strong>
+                    <code id="api-key" style="margin-left: 10px; background: #fff; padding: 4px 8px; border-radius: 4px;">••••••••••••••••</code>
+                </div>
+                <div>
+                    <button type="button" id="show-api-key" style="background: #6c757d; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">
+                        Show
+                    </button>
+                    <button type="button" id="regenerate-api-key" style="background: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        Regenerate
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <small style="color: #6c757d;">
+            Use this API key to deploy projects programmatically. Keep it secure and never share it publicly.
+        </small>
+    </div>
+
+    <!-- Usage Statistics -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Usage Statistics</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #007bff;">{{ total_deployments|default:0 }}</h4>
+                <small style="color: #6c757d;">Total Deployments</small>
+            </div>
+            
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #28a745;">{{ active_sites|default:0 }}</h4>
+                <small style="color: #6c757d;">Active Sites</small>
+            </div>
+            
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #ffc107;">{{ storage_used|default:0 }} MB</h4>
+                <small style="color: #6c757d;">Storage Used</small>
+            </div>
+            
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #17a2b8;">{{ bandwidth_used|default:0 }} GB</h4>
+                <small style="color: #6c757d;">Bandwidth This Month</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid #dc3545;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #dc3545;">Danger Zone</h3>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div>
+                <strong>Delete All Deployments</strong>
+                <div style="color: #6c757d; font-size: 14px;">Permanently delete all your deployed sites and projects.</div>
+            </div>
+            <button type="button" id="delete-all-btn" style="background: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                Delete All
+            </button>
+        </div>
+        
+        <hr style="border: none; border-top: 1px solid #dee2e6; margin: 20px 0;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>Delete Account</strong>
+                <div style="color: #6c757d; font-size: 14px;">Permanently delete your account and all associated data.</div>
+            </div>
+            <button type="button" id="delete-account-btn" style="background: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                Delete Account
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password matching validation
+    const newPassword = document.getElementById('new_password');
+    const confirmPassword = document.getElementById('confirm_password');
+    
+    function validatePasswords() {
+        if (newPassword.value && confirmPassword.value) {
+            if (newPassword.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity("Passwords don't match");
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        }
+    }
+    
+    newPassword.addEventListener('input', validatePasswords);
+    confirmPassword.addEventListener('input', validatePasswords);
+    
+    // Password strength indicator
+    newPassword.addEventListener('input', function() {
+        const password = this.value;
+        const strength = getPasswordStrength(password);
+        // You can add visual feedback here
+    });
+    
+    function getPasswordStrength(password) {
+        let score = 0;
+        if (password.length >= 8) score++;
+        if (/[a-z]/.test(password)) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+        return score;
+    }
+    
+    // API Key functionality
+    const showApiKeyBtn = document.getElementById('show-api-key');
+    const apiKeyDisplay = document.getElementById('api-key');
+    const regenerateApiKeyBtn = document.getElementById('regenerate-api-key');
+    
+    showApiKeyBtn.addEventListener('click', function() {
+        if (apiKeyDisplay.textContent.includes('••••')) {
+            // Show API key (you'd fetch this from your backend)
+            apiKeyDisplay.textContent = 'sk_test_1234567890abcdef'; // Example key
+            this.textContent = 'Hide';
+        } else {
+            apiKeyDisplay.textContent = '••••••••••••••••';
+            this.textContent = 'Show';
+        }
+    });
+    
+    regenerateApiKeyBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to regenerate your API key? This will invalidate your current key.')) {
+            // You'd make an AJAX request to regenerate the API key
+            alert('API key regenerated successfully!');
+            apiKeyDisplay.textContent = '••••••••••••••••';
+            showApiKeyBtn.textContent = 'Show';
+        }
+    });
+    
+    // Danger zone confirmations
+    document.getElementById('delete-all-btn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete ALL your deployments? This action cannot be undone.')) {
+            if (confirm('This will permanently delete all your sites and projects. Type "DELETE ALL" to confirm.')) {
+                const userInput = prompt('Type "DELETE ALL" to confirm:');
+                if (userInput === 'DELETE ALL') {
+                    // You'd make an AJAX request here
+                    alert('All deployments will be deleted.');
+                }
+            }
+        }
+    });
+    
+    document.getElementById('delete-account-btn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            if (confirm('This will permanently delete your account and all data. Type "DELETE ACCOUNT" to confirm.')) {
+                const userInput = prompt('Type "DELETE ACCOUNT" to confirm:');
+                if (userInput === 'DELETE ACCOUNT') {
+                    // You'd make an AJAX request here
+                    alert('Account deletion initiated.');
+                }
+            }
+        }
+    });
+    
+    // Form submissions with loading states
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+            
+            // Re-enable button after a delay (remove this in production)
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }, 2000);
+        });
+    });
+});
+</script>
+
+<style>
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-control:read-only {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+}
+
+button {
+    transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+code {
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 20px 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        display: block !important;
+    }
+    
+    div[style*="grid-template-columns: 1fr 1fr"] > div {
+        margin-bottom: 15px;
+    }
+    
+    div[style*="display: flex; justify-content: space-between"] {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    div[style*="display: flex; justify-content: space-between"] > div:last-child {
+        display: flex;
+        gap: 10px;
+    }
+}
+</style>
+{% endblock %}

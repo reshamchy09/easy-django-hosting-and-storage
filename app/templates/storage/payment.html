@@ -1,0 +1,354 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Storage Purchase - EasyHost{% endblock %}
+{% block page_title %}Storage Purchase{% endblock %}
+
+{% block content %}
+<style>
+    .storage-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .storage-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px 30px;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .card-header p {
+        margin: 8px 0 0 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .card-body { padding: 30px; }
+
+    .status-alert {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: start;
+        gap: 15px;
+    }
+
+    .status-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+    .proof-preview {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .proof-preview img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        max-height: 400px;
+    }
+
+    .qr-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .qr-wrapper {
+        background: white;
+        display: inline-block;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin: 15px auto;
+    }
+
+    .qr-wrapper img {
+        max-width: 250px;
+        height: auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .form-group select,
+    .form-group input[type="file"],
+    .form-group input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        background: white;
+    }
+
+    .form-group input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .pricing-summary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .pricing-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .pricing-row:last-child {
+        border-bottom: none;
+        padding-top: 15px;
+        margin-top: 10px;
+        border-top: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .pricing-value.total {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .help-text {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #0d47a1;
+    }
+
+    @media (max-width: 768px) {
+        .card-body { padding: 20px; }
+        .pricing-value.total { font-size: 1.5rem; }
+    }
+</style>
+
+<div class="storage-container">
+    {% if pending_request %}
+        <!-- Pending Payment Info -->
+        <div class="storage-card">
+            <div class="card-header">
+                <h3>💳 Payment Request Submitted</h3>
+                <p>Your storage purchase is being processed</p>
+            </div>
+            <div class="card-body">
+                <div class="status-alert">
+                    <div class="status-icon">⏳</div>
+                    <div>
+                        <h4>Status: {{ pending_request.status|title }}</h4>
+                        <p>We're reviewing your payment. You'll be notified after approval.</p>
+                    </div>
+                </div>
+
+                {% if pending_request.payment_proof %}
+                    <div class="proof-preview">
+                        <h4>Payment Proof Submitted:</h4>
+                        <img src="{{ pending_request.payment_proof.url }}" alt="Payment proof">
+                    </div>
+                {% endif %}
+
+                <div class="help-text">
+                    <strong>📌 What's Next?</strong>
+                    Your payment will be verified within 24 hours. Once approved, extra storage will be credited to your account automatically.
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- New Payment Request Form -->
+        <div class="storage-card">
+            <div class="card-header">
+                <h3>💾 Purchase More Storage</h3>
+                <p>Expand your storage capacity instantly</p>
+            </div>
+            <div class="card-body">
+
+                <!-- QR Section -->
+                <div class="qr-section">
+                    <h4>📱 Scan QR Code to Pay</h4>
+                    <div class="qr-wrapper">
+                        <img src="{% static 'storage/qr_code.jpg' %}" alt="QR Code">
+                    </div>
+                    <p class="qr-instructions">Scan and pay using eSewa, Khalti, or bank apps.</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" id="purchaseForm">
+                    {% csrf_token %}
+
+                    <!-- Storage GB -->
+                    <div class="form-group">
+                        <label for="id_gb_requested">Select Storage (GB)</label>
+                        {{ form.gb_requested }}
+                    </div>
+
+                    <!-- Payment Proof -->
+                    <div class="form-group">
+                        <label for="id_payment_proof">Upload Payment Screenshot</label>
+                        {{ form.payment_proof }}
+                    </div>
+
+                    <!-- Optional Notes -->
+                    <div class="form-group">
+                        <label for="id_notes">Notes (Optional)</label>
+                        {{ form.notes }}
+                    </div>
+
+                    <!-- Pricing Summary -->
+                    <div class="pricing-summary">
+                        <div class="pricing-row">
+                            <span>Price per GB</span>
+                            <span id="pricePerGb">{{ settings.price_per_gb }} Rs</span>
+                        </div>
+                        <div class="pricing-row">
+                            <span>Storage Amount</span>
+                            <span><span id="selectedGb">1</span> GB</span>
+                        </div>
+                        <div class="pricing-row">
+                            <span>Total Amount</span>
+                            <span class="pricing-value total" id="totalAmount">{{ settings.price_per_gb }} Rs</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">🚀 Submit Payment Request</button>
+                </form>
+
+                <div class="help-text">
+                    <strong>💡 Steps:</strong>
+                    1️⃣ Pay using QR above<br>
+                    2️⃣ Take a payment screenshot<br>
+                    3️⃣ Upload and submit form<br>
+                    4️⃣ Wait for admin approval (within 24 hrs)
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if payment_history %}
+<div class="storage-card">
+    <div class="card-header">
+        <h3>📜 Payment History</h3>
+        <p>Track all your previous storage purchases</p>
+    </div>
+    <div class="card-body">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background: #667eea; color: white;">
+                    <th style="padding: 12px; border-bottom: 1px solid #fff;">Date</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #fff;">GB</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #fff;">Amount (Rs)</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #fff;">Status</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #fff;">Proof</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payment_history %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">{{ payment.requested_at|date:"M d, Y H:i" }}</td>
+                    <td style="padding: 10px;">{{ payment.gb_requested }} GB</td>
+                    <td style="padding: 10px;">{{ payment.amount }} Rs</td>
+                    <td style="padding: 10px;">
+                        {% if payment.status == 'approved' %}
+                            ✅ <span style="color: green;">Approved</span>
+                        {% elif payment.status == 'pending' %}
+                            ⏳ <span style="color: orange;">Pending</span>
+                        {% elif payment.status == 'rejected' %}
+                            ❌ <span style="color: red;">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 10px;">
+                        {% if payment.payment_proof %}
+                            <a href="{{ payment.payment_proof.url }}" target="_blank">View</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const gbSelect = document.getElementById('id_gb_requested');
+    const pricePerGb = parseFloat("{{ settings.price_per_gb|floatformat:2 }}");
+    const pricePerGbEl = document.getElementById('pricePerGb');
+    const totalAmountEl = document.getElementById('totalAmount');
+    const selectedGbEl = document.getElementById('selectedGb');
+
+    function updateTotal() {
+        const gb = parseFloat(gbSelect.value) || 1;
+        const total = (gb * pricePerGb).toFixed(2);
+        selectedGbEl.textContent = gb;
+        totalAmountEl.textContent = total + ' Rs';
+    }
+
+    gbSelect.addEventListener('change', updateTotal);
+    updateTotal();
+});
+</script>
+{% endblock %}

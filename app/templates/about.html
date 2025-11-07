@@ -1,0 +1,1219 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Hostify - Your Trusted Web Hosting Partner{% endblock %}
+
+{% block content %}
+<style>
+/* General Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Section */
+.about-hero {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: #e6e6e6;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #e6e6e6;
+}
+
+/* Our Story Section */
+.our-story {
+    padding: 4rem 0;
+    background: #ffffff;
+}
+
+.story-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .story-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.story-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.story-text p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.story-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.highlight {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.highlight i {
+    font-size: 1.5rem;
+    color: #3b82f6;
+}
+
+.highlight strong {
+    display: block;
+    font-size: 1.1rem;
+}
+
+.highlight span {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline:before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #3b82f6;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.timeline-item.animate {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.timeline-item:before {
+    content: '';
+    position: absolute;
+    left: -2.25rem;
+    top: 0.5rem;
+    width: 12px;
+    height: 12px;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.timeline-year {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-content h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-content p {
+    color: #666;
+}
+
+/* Mission & Values Section */
+.mission-values {
+    padding: 4rem 0;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .mission-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.mission-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+}
+
+.mission-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.mission-card p {
+    color: #666;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.value-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.value-item i {
+    font-size: 2rem;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+}
+
+.value-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.value-item p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Team Section */
+.team-section {
+    padding: 4rem 0;
+    background: #f5f7fa;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.team-member {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.member-photo {
+    position: relative;
+    height: 200px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-placeholder {
+    font-size: 4rem;
+    color: #9ca3af;
+}
+
+.member-social {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.member-social a {
+    color: #3b82f6;
+    font-size: 1.2rem;
+}
+
+.member-social a:hover {
+    color: #2563eb;
+}
+
+.member-info {
+    padding: 1.5rem;
+}
+
+.member-title {
+    color: #3b82f6;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.member-bio {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Infrastructure Section */
+.infrastructure-section {
+    padding: 4rem 0;
+}
+
+.infrastructure-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.infrastructure-item {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 1.5rem;
+}
+
+.infra-icon {
+    font-size: 2.5rem;
+    color: #3b82f6;
+}
+
+.infra-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.infra-content p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.infra-content ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.infra-content ul li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.infra-content ul li:before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    color: #3b82f6;
+}
+
+/* Achievements Section */
+.achievements-section {
+    padding: 4rem 0;
+    background: #ffffff;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.achievement-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+}
+
+.achievement-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.achievement-item p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Sustainability Section */
+.sustainability-section {
+    padding: 4rem 0;
+}
+
+.sustainability-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .sustainability-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sustainability-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.sustainability-text p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.sustainability-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sustainability-feature {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.sustainability-feature i {
+    font-size: 2rem;
+    color: #16a34a;
+}
+
+.sustainability-feature h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.sustainability-feature p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.eco-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.eco-stat {
+    text-align: center;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.eco-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: 0.5rem;
+}
+
+.eco-label {
+    font-size: 1rem;
+    color: #666;
+}
+
+.green-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 1rem;
+    background: #f0fdf4;
+    border-radius: 8px;
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.green-badge i {
+    font-size: 1.5rem;
+}
+
+/* Call to Action Section */
+.about-cta {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.cta-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: #e6e6e6;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary {
+    background: #16a34a;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #15803d;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.trust-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #e6e6e6;
+}
+
+.trust-item i {
+    color: #16a34a;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .story-text h2, .sustainability-text h2, .mission-card h2 {
+        font-size: 1.8rem;
+    }
+    
+    .team-member {
+        text-align: center;
+    }
+    
+    .member-photo {
+        height: 150px;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="about-hero fade-in">
+    <div class="container">
+        <div class="hero-content">
+            <h1>About Hostify</h1>
+            <p>Empowering businesses worldwide with reliable, fast, and secure web hosting solutions since 2015. We're more than just a hosting provider - we're your digital partner in success.</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number" data-count="50000">0</div>
+                <div class="stat-label">Happy Customers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="15">0</div>
+                <div class="stat-label">Data Centers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="99.9">0</div>
+                <div class="stat-label">% Uptime</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="24">0</div>
+                <div class="stat-label">Hours Support</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="our-story">
+    <div class="container">
+        <div class="story-content">
+            <div class="story-text fade-in">
+                <h2>Our Story</h2>
+                <p>Founded in 2015 by a team of passionate developers and system administrators, Hostify began with a simple mission: to provide reliable, affordable web hosting that doesn't compromise on quality or support.</p>
+                
+                <p>What started as a small team working out of a garage has grown into a leading web hosting provider serving over 50,000 customers across 120 countries. Our journey has been driven by one core belief - that every business, regardless of size, deserves enterprise-level hosting solutions.</p>
+                
+                <p>Today, we operate 15 state-of-the-art data centers worldwide, maintain a 99.9% uptime guarantee, and continue to innovate in cloud hosting, security, and performance optimization.</p>
+                
+                <div class="story-highlights">
+                    <div class="highlight">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <strong>Founded in 2015</strong>
+                            <span>8+ years of hosting excellence</span>
+                        </div>
+                    </div>
+                    <div class="highlight">
+                        <i class="fas fa-globe"></i>
+                        <div>
+                            <strong>120+ Countries</strong>
+                            <span>Serving customers worldwide</span>
+                        </div>
+                    </div>
+                    <div class="highlight">
+                        <i class="fas fa-award"></i>
+                        <div>
+                            <strong>Industry Recognition</strong>
+                            <span>Multiple hosting awards</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="story-visual fade-in">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">2015</div>
+                        <div class="timeline-content">
+                            <h4>Company Founded</h4>
+                            <p>Started with 3 founders and 1 data center</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2017</div>
+                        <div class="timeline-content">
+                            <h4>Global Expansion</h4>
+                            <p>Opened data centers in Europe and Asia</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2019</div>
+                        <div class="timeline-content">
+                            <h4>10K Milestone</h4>
+                            <p>Reached 10,000 satisfied customers</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2021</div>
+                        <div class="timeline-content">
+                            <h4>Cloud Innovation</h4>
+                            <p>Launched advanced cloud hosting solutions</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2023</div>
+                        <div class="timeline-content">
+                            <h4>50K Customers</h4>
+                            <p>Celebrating 50,000+ happy customers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Values Section -->
+<section class="mission-values">
+    <div class="container">
+        <h2 class="section-title fade-in">Our Mission & Values</h2>
+        
+        <div class="mission-grid">
+            <div class="mission-card fade-in">
+                <div class="card-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3>Our Mission</h3>
+                <p>To empower businesses of all sizes with reliable, secure, and high-performance web hosting solutions that help them succeed online. We believe that quality hosting should be accessible to everyone, backed by exceptional support and innovative technology.</p>
+            </div>
+            
+            <div class="values-grid fade-in">
+                <div class="value-item">
+                    <i class="fas fa-heart"></i>
+                    <h4>Customer First</h4>
+                    <p>Every decision we make is guided by what's best for our customers</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Reliability</h4>
+                    <p>We guarantee 99.9% uptime and robust security for peace of mind</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <h4>Innovation</h4>
+                    <p>Continuously improving our technology and services</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-handshake"></i>
+                    <h4>Transparency</h4>
+                    <p>Honest pricing, clear communication, no hidden fees</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Performance</h4>
+                    <p>Optimized infrastructure for maximum speed and efficiency</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-users"></i>
+                    <h4>Community</h4>
+                    <p>Building lasting relationships with our customers and partners</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section">
+    <div class="container">
+        <h2 class="section-title fade-in">Meet Our Leadership Team</h2>
+        <p class="section-subtitle fade-in">Passionate experts dedicated to your success</p>
+        
+        <div class="team-grid">
+            <div class="team-member fade-in">
+                <div class="member-photo">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="member-social">
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="member-info">
+                    <h3>Sarah Johnson</h3>
+                    <p class="member-title">Chief Executive Officer</p>
+                    <p class="member-bio">With over 15 years in the hosting industry, Sarah leads our vision of democratizing web hosting. Previously VP of Engineering at CloudTech.</p>
+                </div>
+            </div>
+            
+            <div class="team-member fade-in">
+                <div class="member-photo">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="member-social">
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="member-info">
+                    <h3>Michael Chen</h3>
+                    <p class="member-title">Chief Technology Officer</p>
+                    <p class="member-bio">Michael oversees our technical infrastructure and innovation. Former Senior Engineer at Amazon Web Services with expertise in cloud architecture.</p>
+                </div>
+            </div>
+            
+            <div class="team-member fade-in">
+                <div class="member-photo">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="member-social">
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="member-info">
+                    <h3>Emily Rodriguez</h3>
+                    <p class="member-title">Head of Customer Success</p>
+                    <p class="member-bio">Emily leads our world-class support team. Her passion for customer experience has helped us maintain industry-leading satisfaction rates.</p>
+                </div>
+            </div>
+            
+            <div class="team-member fade-in">
+                <div class="member-photo">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="member-social">
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="member-info">
+                    <h3>David Kumar</h3>
+                    <p class="member-title">VP of Security</p>
+                    <p class="member-bio">David ensures our infrastructure remains secure and compliant. Former security consultant with certifications in cybersecurity and compliance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Infrastructure Section -->
+<section class="infrastructure-section">
+    <div class="container">
+        <h2 class="section-title fade-in">Our Infrastructure</h2>
+        <p class="section-subtitle fade-in">Enterprise-grade technology powering your success</p>
+        
+        <div class="infrastructure-grid">
+            <div class="infrastructure-item fade-in">
+                <div class="infra-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="infra-content">
+                    <h3>15 Global Data Centers</h3>
+                    <p>Strategically located across North America, Europe, Asia-Pacific, and South America for optimal performance worldwide.</p>
+                    <ul>
+                        <li>Tier 3 and Tier 4 facilities</li>
+                        <li>99.9% uptime SLA</li>
+                        <li>24/7 monitoring</li>
+                        <li>Redundant power systems</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="infrastructure-item fade-in">
+                <div class="infra-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="infra-content">
+                    <h3>Advanced Security</h3>
+                    <p>Multi-layered security approach protecting your data and applications from threats.</p>
+                    <ul>
+                        <li>DDoS protection</li>
+                        <li>SSL certificates included</li>
+                        <li>Regular security audits</li>
+                        <li>Automated malware scanning</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="infrastructure-item fade-in">
+                <div class="infra-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="infra-content">
+                    <h3>High Performance</h3>
+                    <p>Cutting-edge hardware and optimization techniques for maximum speed and reliability.</p>
+                    <ul>
+                        <li>SSD storage across all plans</li>
+                        <li>Global CDN network</li>
+                        <li>HTTP/2 and PHP 8+ support</li>
+                        <li>Advanced caching systems</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="infrastructure-item fade-in">
+                <div class="infra-icon">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <div class="infra-content">
+                    <h3>Automated Backups</h3>
+                    <p>Your data is safe with our comprehensive backup and disaster recovery systems.</p>
+                    <ul>
+                        <li>Daily automated backups</li>
+                        <li>30-day retention period</li>
+                        <li>One-click restore</li>
+                        <li>Geographic redundancy</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Achievements Section -->
+<section class="achievements-section">
+    <div class="container">
+        <h2 class="section-title fade-in">Awards & Recognition</h2>
+        <div class="achievements-grid">
+            <div class="achievement-item fade-in">
+                <div class="achievement-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>Best Web Hosting 2023</h3>
+                <p>TechReview Awards</p>
+            </div>
+            
+            <div class="achievement-item fade-in">
+                <div class="achievement-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>Customer Choice Award</h3>
+                <p>HostingAdvisor 2023</p>
+            </div>
+            
+            <div class="achievement-item fade-in">
+                <div class="achievement-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>5-Star Rating</h3>
+                <p>TrustPilot Reviews</p>
+            </div>
+            
+            <div class="achievement-item fade-in">
+                <div class="achievement-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Security Excellence</h3>
+                <p>CyberSecurity Awards</p>
+            </div>
+            
+            <div class="achievement-item fade-in">
+                <div class="achievement-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Green Hosting Leader</h3>
+                <p>Environmental Tech Awards</p>
+            </div>
+            
+            <div class="achievement-item fade-in">
+                <div class="achievement-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Best Support Team</h3>
+                <p>Customer Service Excellence</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sustainability Section -->
+<section class="sustainability-section">
+    <div class="container">
+        <div class="sustainability-content">
+            <div class="sustainability-text fade-in">
+                <h2>Our Commitment to Sustainability</h2>
+                <p>We believe in responsible hosting that doesn't compromise our planet's future. That's why we've committed to carbon-neutral hosting by 2025.</p>
+                
+                <div class="sustainability-features">
+                    <div class="sustainability-feature">
+                        <i class="fas fa-leaf"></i>
+                        <div>
+                            <h4>100% Renewable Energy</h4>
+                            <p>All our data centers run on renewable energy sources including solar, wind, and hydroelectric power.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sustainability-feature">
+                        <i class="fas fa-recycle"></i>
+                        <div>
+                            <h4>Carbon Offset Program</h4>
+                            <p>We offset 120% of our carbon footprint through verified environmental projects worldwide.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sustainability-feature">
+                        <i class="fas fa-tree"></i>
+                        <div>
+                            <h4>Tree Planting Initiative</h4>
+                            <p>For every new customer, we plant a tree. Over 50,000 trees planted and counting!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sustainability-visual fade-in">
+                <div class="eco-stats">
+                    <div class="eco-stat">
+                        <div class="eco-number" data-count="50000">0</div>
+                        <div class="eco-label">Trees Planted</div>
+                    </div>
+                    <div class="eco-stat">
+                        <div class="eco-number" data-count="100">0</div>
+                        <div class="eco-label">% Renewable Energy</div>
+                    </div>
+                    <div class="eco-stat">
+                        <div class="eco-number" data-count="120">0</div>
+                        <div class="eco-label">% Carbon Offset</div>
+                    </div>
+                </div>
+                
+                <div class="green-badge">
+                    <i class="fas fa-certificate"></i>
+                    <span>Certified Green Hosting</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="about-cta">
+    <div class="container">
+        <div class="cta-content fade-in">
+            <h2>Ready to Join the Hostify Family?</h2>
+            <p>Experience the difference that reliable hosting and exceptional support can make for your business.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'plans' %}" class="btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Get Started Today
+                </a>
+                <a href="{% url 'contact' %}" class="btn-secondary">
+                    <i class="fas fa-phone"></i>
+                    Talk to Our Team
+                </a>
+            </div>
+            
+            <div class="trust-indicators">
+                <div class="trust-item">
+                    <i class="fas fa-shield-check"></i>
+                    <span>30-Day Money Back Guarantee</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-headset"></i>
+                    <span>24/7 Expert Support</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-bolt"></i>
+                    <span>99.9% Uptime SLA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Counter Animation
+function animateCounters() {
+    const counters = document.querySelectorAll('[data-count]');
+    
+    counters.forEach(counter => {
+        const target = parseFloat(counter.getAttribute('data-count')); // Changed to parseFloat to handle decimals
+        const duration = 2000; // 2 seconds
+        const step = target / (duration / 16); // 60fps
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            
+            // Format number with commas for large numbers, keep one decimal for percentages
+            if (target >= 1000) {
+                counter.textContent = Math.floor(current).toLocaleString();
+            } else {
+                counter.textContent = current.toFixed(1); // Keep one decimal for percentages
+            }
+        }, 16);
+    });
+}
+
+// Trigger counter animation when elements come into view
+const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounters();
+            counterObserver.unobserve(entry.target); // Only animate once
+        }
+    });
+}, { threshold: 0.5 });
+
+// Observe hero stats and eco stats
+document.querySelector('.hero-stats') && counterObserver.observe(document.querySelector('.hero-stats'));
+document.querySelector('.eco-stats') && counterObserver.observe(document.querySelector('.eco-stats'));
+
+// Timeline Animation
+function animateTimeline() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    
+    timelineItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.classList.add('animate');
+        }, index * 200);
+    });
+}
+
+// Trigger timeline animation
+const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateTimeline();
+            timelineObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.3 });
+
+document.querySelector('.timeline') && timelineObserver.observe(document.querySelector('.timeline'));
+
+// Team Member Hover Effects
+document.querySelectorAll('.team-member').forEach(member => {
+    member.addEventListener('mouseenter', function() {
+        this.querySelector('.member-social').style.opacity = '1';
+        this.querySelector('.member-social').style.transform = 'translateY(0)';
+    });
+    
+    member.addEventListener('mouseleave', function() {
+        this.querySelector('.member-social').style.opacity = '0';
+        this.querySelector('.member-social').style.transform = 'translateY(10px)';
+    });
+});
+
+// Smooth reveal animations for scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Apply fade-in animation to all elements with fade-in class
+document.querySelectorAll('.fade-in').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(50px)';
+    el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    observer.observe(el);
+});
+
+// Parallax effect for hero section
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const hero = document.querySelector('.about-hero');
+    if (hero && scrolled < hero.offsetHeight) {
+        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+
+// Add loading animation to CTA buttons
+document.querySelectorAll('.btn-primary, .btn-secondary').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (this.href && !this.href.includes('#')) {
+            e.preventDefault();
+            this.style.opacity = '0.7';
+            this.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                window.location.href = this.href;
+            }, 300);
+        }
+    });
+});
+</script>
+
+{% endblock %}

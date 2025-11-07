@@ -1,0 +1,535 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Django Projects{% endblock %}
+{% block page_title %}My Django Projects{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+    <h2 style="margin: 0;">My Django Projects</h2>
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button onclick="refreshAllProjects()" style="background: #6c757d; color: #fff; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <span id="refresh-icon">🔄</span> Refresh Status
+        </button>
+        <a href="{% url 'deploy_django' %}" style="background: #0d6efd; color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            ➕ Deploy New Project
+        </a>
+    </div>
+</div>
+
+<!-- Filter and Sort Controls -->
+<div style="background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <label style="font-weight: 600;">Filter:</label>
+        <select id="statusFilter" onchange="filterProjects()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="all">All Projects</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+            <option value="deploying">Deploying</option>
+            <option value="failed">Failed</option>
+        </select>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <label style="font-weight: 600;">Sort by:</label>
+        <select id="sortBy" onchange="sortProjects()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="name">Project Name</option>
+            <option value="status">Status</option>
+        </select>
+    </div>
+    <div style="margin-left: auto; color: #6c757d; font-size: 0.9rem;">
+        Total: <span id="total-count">{{ projects|length }}</span> projects
+    </div>
+</div>
+
+{% if projects %}
+<div id="projects-container" style="display: flex; flex-wrap: wrap; gap: 20px;">
+    {% for project in projects %}
+    <div class="project-card" data-status="{% if project.is_active %}active{% else %}inactive{% endif %}" data-name="{{ project.project_name|lower }}" data-created="{{ project.created_at|date:'Y-m-d' }}" style="flex: 1 1 300px; min-width: 300px; max-width: 400px;">
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; height: 100%; display: flex; flex-direction: column;">
+            <!-- Project Header -->
+            <div style="background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%); color: white; padding: 20px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <h5 style="margin: 0; font-size: 1.2rem; font-weight: 600;">{{ project.project_name }}</h5>
+                    <div class="dropdown" style="position: relative;">
+                        <button onclick="toggleDropdown({{ project.id }})" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;">
+                            ⚙️
+                        </button>
+                        <div id="dropdown-{{ project.id }}" class="dropdown-menu" style="display: none; position: absolute; right: 0; top: 100%; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; min-width: 200px; margin-top: 5px;">
+                            <div style="padding: 8px;">
+                                <a href="{% url 'django_project_detail' project.id %}" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; color: #333; text-decoration: none; border-radius: 4px; transition: background 0.2s;">
+                                    📊 View Details
+                                </a>
+                                <button onclick="toggleProjectStatus({{ project.id }}, '{{ project.is_active|yesno:'true,false' }}')" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: none; border: none; color: #333; text-align: left; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                                    {% if project.is_active %}
+                                        ⏸️ Deactivate
+                                    {% else %}
+                                        ▶️ Activate
+                                    {% endif %}
+                                </button>
+                                <button onclick="restartProject({{ project.id }})" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: none; border: none; color: #333; text-align: left; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                                    🔄 Restart
+                                </button>
+                                <button onclick="viewLogs({{ project.id }})" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: none; border: none; color: #333; text-align: left; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                                    📋 View Logs
+                                </button>
+                                <button onclick="updateProject({{ project.id }})" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: none; border: none; color: #333; text-align: left; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                                    ⬆️ Update Code
+                                </button>
+                                <hr style="margin: 8px 0; border: none; border-top: 1px solid #eee;">
+                                <button onclick="deleteProject({{ project.id }}, '{{ project.project_name }}')" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: none; border: none; color: #dc3545; text-align: left; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                                    🗑️ Delete Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="status-badge status-{{ project.deployment_status|default:'unknown' }}" style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">
+                        {% if project.is_active and project.deployment_status == 'deployed' %}
+                            🟢 Active
+                        {% elif project.deployment_status == 'deploying' %}
+                            🟡 Deploying
+                        {% elif project.deployment_status == 'failed' %}
+                            🔴 Failed
+                        {% else %}
+                            ⚫ Inactive
+                        {% endif %}
+                    </span>
+                    <div style="font-size: 0.8rem; opacity: 0.9;">
+                        {{ project.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Body -->
+            <div style="padding: 20px; flex: 1; display: flex; flex-direction: column;">
+                <p style="color: #6c757d; margin-bottom: 15px; flex: 1; line-height: 1.4;">
+                    {{ project.description|default:"No description provided" }}
+                </p>
+                
+                <!-- Project Stats -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 0.85rem;">
+                    <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; text-align: center;">
+                        <div style="font-weight: 600; color: #495057;">Python</div>
+                        <div style="color: #6c757d;">{{ project.python_version|default:"3.9" }}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; text-align: center;">
+                        <div style="font-weight: 600; color: #495057;">Memory</div>
+                        <div style="color: #6c757d;">{{ project.memory_limit|default:"512MB" }}</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 10px; margin-top: auto;">
+                    {% if project.domain_name and project.is_active %}
+                        <a href="{{ project.get_site_url }}" target="_blank" style="flex: 1; background: #28a745; color: #fff; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            🌐 Visit Site
+                        </a>
+                    {% else %}
+                        <button disabled style="flex: 1; background: #6c757d; color: #fff; padding: 10px; border-radius: 6px; border: none; font-size: 0.9rem; cursor: not-allowed; opacity: 0.6;">
+                            🌐 Site Offline
+                        </button>
+                    {% endif %}
+                    <button onclick="copyDomain('{{ project.domain_name }}')" style="background: #17a2b8; color: #fff; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.9rem; min-width: 60px;">
+                        📋
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Empty State -->
+<div id="empty-state" style="display: none; text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📦</div>
+    <h4 style="margin-bottom: 10px; color: #495057;">No projects found</h4>
+    <p style="color: #6c757d; margin-bottom: 20px;">Try adjusting your filters or deploy a new project.</p>
+    <a href="{% url 'deploy_django' %}" style="background: #0d6efd; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Deploy Your First Project</a>
+</div>
+
+{% else %}
+<!-- No Projects State -->
+<div style="text-align: center; padding: 80px 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">🚀</div>
+    <h4 style="margin-bottom: 15px; color: #495057;">No Django projects yet</h4>
+    <p style="color: #6c757d; margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">Deploy your first Django project to get started with powerful web applications!</p>
+    <a href="{% url 'deploy_django' %}" style="background: #0d6efd; color: #fff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 10px;">
+        🚀 Deploy Django Project
+    </a>
+</div>
+{% endif %}
+
+<!-- Modals -->
+<!-- Update Project Modal -->
+<div id="updateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; max-height: 90%; overflow-y: auto;">
+        <h4 style="margin-top: 0; margin-bottom: 20px;">Update Project Code</h4>
+        <form id="updateForm" enctype="multipart/form-data">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">New Project ZIP File:</label>
+                <input type="file" name="project_file" accept=".zip" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Update Notes:</label>
+                <textarea name="update_notes" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="Describe what's new in this update..."></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closeModal('updateModal')" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: #0d6efd; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">Update Project</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Logs Modal -->
+<div id="logsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 30px; max-width: 800px; width: 90%; max-height: 90%; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h4 style="margin: 0;">Project Logs</h4>
+            <button onclick="refreshLogs()" style="background: #6c757d; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">🔄 Refresh</button>
+        </div>
+        <div id="logsContent" style="background: #1e1e1e; color: #fff; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; overflow-y: auto; flex: 1; max-height: 400px; white-space: pre-wrap;">
+            Loading logs...
+        </div>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="closeModal('logsModal')" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.project-card {
+    transition: all 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+}
+
+.project-card:hover > div {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.dropdown-menu {
+    animation: fadeInDown 0.2s ease;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+    background: #f8f9fa;
+}
+
+.status-deployed { background-color: rgba(40, 167, 69, 0.2) !important; color: #28a745; }
+.status-deploying { background-color: rgba(255, 193, 7, 0.2) !important; color: #ffc107; }
+.status-failed { background-color: rgba(220, 53, 69, 0.2) !important; color: #dc3545; }
+.status-unknown { background-color: rgba(108, 117, 125, 0.2) !important; color: #6c757d; }
+
+@media (max-width: 768px) {
+    .project-card {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+    
+    #updateModal > div,
+    #logsModal > div {
+        width: 95%;
+        padding: 20px;
+    }
+}
+</style>
+
+<script>
+let currentProjectIdForUpdate = null;
+let currentProjectIdForLogs = null;
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    }
+});
+
+function toggleDropdown(projectId) {
+    const dropdown = document.getElementById(`dropdown-${projectId}`);
+    const isVisible = dropdown.style.display === 'block';
+    
+    // Close all dropdowns
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.style.display = 'none';
+    });
+    
+    // Toggle current dropdown
+    if (!isVisible) {
+        dropdown.style.display = 'block';
+    }
+}
+
+function toggleProjectStatus(projectId, currentStatus) {
+    const isActive = currentStatus === 'true';
+    const action = isActive ? 'deactivate' : 'activate';
+    
+    if (confirm(`Are you sure you want to ${action} this project?`)) {
+        fetch(`/dashboard/django/${projectId}/toggle-status/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ active: !isActive })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to update project status: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to update project status');
+        });
+    }
+    
+    // Close dropdown
+    document.getElementById(`dropdown-${projectId}`).style.display = 'none';
+}
+
+function restartProject(projectId) {
+    if (confirm('Are you sure you want to restart this project? This may cause brief downtime.')) {
+        window.location.href = `/dashboard/django/${projectId}/restart/`;
+    }
+    document.getElementById(`dropdown-${projectId}`).style.display = 'none';
+}
+
+function updateProject(projectId) {
+    currentProjectIdForUpdate = projectId;
+    document.getElementById('updateModal').style.display = 'flex';
+    document.getElementById(`dropdown-${projectId}`).style.display = 'none';
+}
+
+function viewLogs(projectId) {
+    currentProjectIdForLogs = projectId;
+    document.getElementById('logsModal').style.display = 'flex';
+    refreshLogs();
+    document.getElementById(`dropdown-${projectId}`).style.display = 'none';
+}
+
+function deleteProject(projectId, projectName) {
+    if (confirm(`Are you sure you want to delete "${projectName}"? This action cannot be undone.`)) {
+        if (confirm('This will permanently delete all project files and data. Continue?')) {
+            window.location.href = `/dashboard/django/${projectId}/delete/`;
+        }
+    }
+    document.getElementById(`dropdown-${projectId}`).style.display = 'none';
+}
+
+function copyDomain(domain) {
+    if (domain) {
+        navigator.clipboard.writeText(`http://${domain}`).then(() => {
+            showToast('Domain copied to clipboard!');
+        }).catch(() => {
+            showToast('Failed to copy domain');
+        });
+    } else {
+        showToast('No domain available');
+    }
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function refreshLogs() {
+    if (!currentProjectIdForLogs) return;
+    
+    const logsContent = document.getElementById('logsContent');
+    logsContent.textContent = 'Loading logs...';
+    
+    fetch(`/dashboard/django/${currentProjectIdForLogs}/logs/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                logsContent.textContent = data.logs || 'No logs available';
+            } else {
+                logsContent.textContent = 'Error loading logs: ' + (data.error || 'Unknown error');
+            }
+            // Auto scroll to bottom
+            logsContent.scrollTop = logsContent.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            logsContent.textContent = 'Failed to load logs';
+        });
+}
+
+function refreshAllProjects() {
+    const refreshIcon = document.getElementById('refresh-icon');
+    refreshIcon.style.animation = 'spin 1s linear infinite';
+    
+    // Simulate refresh (you can implement actual status checking here)
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+
+function filterProjects() {
+    const filter = document.getElementById('statusFilter').value;
+    const cards = document.querySelectorAll('.project-card');
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+        const status = card.dataset.status;
+        let show = false;
+        
+        if (filter === 'all') {
+            show = true;
+        } else if (filter === 'active' && status === 'active') {
+            show = true;
+        } else if (filter === 'inactive' && status === 'inactive') {
+            show = true;
+        }
+        
+        if (show) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show empty state if no cards visible
+    const emptyState = document.getElementById('empty-state');
+    const container = document.getElementById('projects-container');
+    
+    if (emptyState && container) {
+        if (visibleCount === 0) {
+            container.style.display = 'none';
+            emptyState.style.display = 'block';
+        } else {
+            container.style.display = 'flex';
+            emptyState.style.display = 'none';
+        }
+    }
+    
+    // Update count
+    document.getElementById('total-count').textContent = visibleCount;
+}
+
+function sortProjects() {
+    const sortBy = document.getElementById('sortBy').value;
+    const container = document.getElementById('projects-container');
+    const cards = Array.from(container.querySelectorAll('.project-card'));
+    
+    cards.sort((a, b) => {
+        switch (sortBy) {
+            case 'newest':
+                return new Date(b.dataset.created) - new Date(a.dataset.created);
+            case 'oldest':
+                return new Date(a.dataset.created) - new Date(b.dataset.created);
+            case 'name':
+                return a.dataset.name.localeCompare(b.dataset.name);
+            case 'status':
+                return a.dataset.status.localeCompare(b.dataset.status);
+            default:
+                return 0;
+        }
+    });
+    
+    // Re-append sorted cards
+    cards.forEach(card => container.appendChild(card));
+}
+
+// Handle update form submission
+document.getElementById('updateForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentProjectIdForUpdate) return;
+    
+    const formData = new FormData(this);
+    
+    fetch(`/dashboard/django/${currentProjectIdForUpdate}/update/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Project updated successfully!');
+            closeModal('updateModal');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            alert('Failed to update project: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update project');
+    });
+});
+
+function showToast(message) {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        z-index: 3000;
+        animation: slideInUp 0.3s ease;
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Add CSS animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes slideInUp {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

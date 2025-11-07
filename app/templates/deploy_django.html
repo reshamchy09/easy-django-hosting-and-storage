@@ -1,0 +1,389 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Deploy Django Project{% endblock %}
+
+{% block page_title %}Deploy Django Project{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    <!-- Left Column: Form -->
+    <div style="flex: 1 1 600px; min-width: 300px;">
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" id="django-deploy-form">
+                {% csrf_token %}
+                
+                <!-- Project Name -->
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.project_name.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Project Name *
+                    </label>
+                    {{ form.project_name }}
+                    {% if form.project_name.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.project_name.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Description (Optional) -->
+                {% if form.description %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.description.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Description
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.description.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Project File -->
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.project_file.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Django Project ZIP File *
+                    </label>
+                    {{ form.project_file }}
+                    {% if form.project_file.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.project_file.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                    <div style="font-size: 0.8rem; color: #6c757d; margin-top: 3px;">
+                        Upload your Django project as a ZIP file (max 100MB). Must contain manage.py and settings.py
+                    </div>
+                </div>
+
+                <!-- Python Version (Optional) -->
+                {% if form.python_version %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.python_version.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Python Version
+                    </label>
+                    {{ form.python_version }}
+                    {% if form.python_version.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.python_version.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Custom Domain -->
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.custom_domain.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Custom Domain
+                    </label>
+                    {{ form.custom_domain }}
+                    {% if form.custom_domain.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.custom_domain.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                    <div style="font-size: 0.8rem; color: #6c757d; margin-top: 3px;">
+                        Optional: Use your own domain (e.g., myapp.com)
+                    </div>
+                </div>
+
+                <!-- Memory Limit (Optional) -->
+                {% if form.memory_limit %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.memory_limit.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Memory Limit
+                    </label>
+                    {{ form.memory_limit }}
+                    {% if form.memory_limit.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.memory_limit.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Environment Variables (Optional) -->
+                {% if form.environment_vars %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ form.environment_vars.id_for_label }}" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                        Environment Variables
+                    </label>
+                    {{ form.environment_vars }}
+                    {% if form.environment_vars.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 5px;">
+                            {% for error in form.environment_vars.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                    <div style="font-size: 0.8rem; color: #6c757d; margin-top: 3px;">
+                        Optional: Add custom environment variables (KEY=value format, one per line)
+                    </div>
+                </div>
+                {% endif %}
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+                   <button type="submit" id="deploy-btn" style="background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                     <span class="btn-text">Deploy Project</span>
+                    </button>
+
+                    <a href="{% url 'django_projects' %}" style="background: #6c757d; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Column: Cards -->
+    <div style="flex: 0 1 300px; min-width: 250px; display: flex; flex-direction: column; gap: 20px;">
+        <!-- Requirements -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h5 style="margin-top: 0; margin-bottom: 15px;">Requirements</h5>
+            <ul style="list-style: none; padding-left: 0; margin: 0;">
+                <li style="margin-bottom: 8px; padding: 4px 0;">✅ Django project</li>
+                <li style="margin-bottom: 8px; padding: 4px 0;">✅ manage.py file</li>
+                <li style="margin-bottom: 8px; padding: 4px 0;">✅ requirements.txt</li>
+                <li style="margin-bottom: 8px; padding: 4px 0;">✅ ZIP format only</li>
+                <li style="margin-bottom: 8px; padding: 4px 0;">✅ Under 100MB</li>
+            </ul>
+        </div>
+
+        <!-- Tips -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h5 style="margin-top: 0; margin-bottom: 15px;">Tips</h5>
+            <ul style="font-size: 0.875rem; color: #6c757d; list-style: none; padding-left: 0; margin: 0;">
+                <li style="margin-bottom: 8px; padding: 2px 0;">🐍 Django 3.2+ supported</li>
+                <li style="margin-bottom: 8px; padding: 2px 0;">⚡ Auto-deployment</li>
+                <li style="margin-bottom: 8px; padding: 2px 0;">📦 Pip install requirements</li>
+                <li style="margin-bottom: 8px; padding: 2px 0;">🔒 HTTPS included</li>
+                <li style="margin-bottom: 8px; padding: 2px 0;">🔄 Zero-downtime updates</li>
+            </ul>
+        </div>
+
+        <!-- Deployment Steps -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h5 style="margin-top: 0; margin-bottom: 15px;">Deployment Process</h5>
+            <ol style="font-size: 0.875rem; color: #6c757d; margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">Upload & extract files</li>
+                <li style="margin-bottom: 8px;">Install dependencies</li>
+                <li style="margin-bottom: 8px;">Run migrations</li>
+                <li style="margin-bottom: 8px;">Collect static files</li>
+                <li style="margin-bottom: 8px;">Start application</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('django-deploy-form');
+    const submitBtn = document.getElementById('deploy-btn');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const btnText = submitBtn.querySelector('.btn-text');
+    
+    form.addEventListener('submit', function(e) {
+        const projectName = form.querySelector('input[name="project_name"]').value.trim();
+        const projectFile = form.querySelector('input[name="project_file"]').files[0];
+        
+        if (!projectName) {
+            alert('Please enter a project name');
+            e.preventDefault();
+            return false;
+        }
+        
+        if (!projectFile) {
+            alert('Please select a Django project ZIP file to upload');
+            e.preventDefault();
+            return false;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        btnText.textContent = 'Deploying...';
+        
+        // Re-enable button after 30 seconds in case of network issues
+        setTimeout(function() {
+            if (submitBtn.disabled) {
+                submitBtn.disabled = false;
+                spinner.classList.add('d-none');
+                btnText.textContent = 'Deploy Project';
+            }
+        }, 30000);
+    });
+
+    // File validation
+    const fileInput = document.querySelector('input[name="project_file"]');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileLabel = document.querySelector('label[for="' + this.id + '"]');
+            
+            if (file) {
+                const maxSize = 100 * 1024 * 1024; // 100MB
+                
+                if (file.size > maxSize) {
+                    alert('File size exceeds 100MB limit. Please choose a smaller file.');
+                    e.target.value = '';
+                    return;
+                }
+                
+                if (!file.name.toLowerCase().endsWith('.zip')) {
+                    alert('Please select a ZIP file. Other formats are not supported.');
+                    e.target.value = '';
+                    return;
+                }
+                
+                if (fileLabel) {
+                    fileLabel.style.color = '#007bff';
+                    fileLabel.innerHTML = 'Django Project ZIP File * <small style="color: #6c757d;">(' + file.name + ' - ' + (file.size / 1024 / 1024).toFixed(2) + ' MB)</small>';
+                }
+            } else if (fileLabel) {
+                fileLabel.style.color = '';
+                fileLabel.textContent = 'Django Project ZIP File *';
+            }
+        });
+    }
+
+    // Project name validation
+    const projectNameInput = document.querySelector('input[name="project_name"]');
+    if (projectNameInput) {
+        projectNameInput.addEventListener('input', function(e) {
+            const value = e.target.value;
+            const sanitized = value.replace(/[^a-zA-Z0-9\-_\s]/g, '');
+            if (value !== sanitized) {
+                e.target.value = sanitized;
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border: 0.125em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border-spin 0.75s linear infinite;
+    margin-right: 8px;
+}
+
+.spinner-border-sm {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-width: 0.125em;
+}
+
+@keyframes spinner-border-spin {
+    to { transform: rotate(360deg); }
+}
+
+#deploy-btn {
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;
+}
+
+#deploy-btn:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+#deploy-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#deploy-btn:disabled:hover {
+    background-color: #007bff;
+    box-shadow: none;
+}
+
+/* Form validation styling */
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-control.is-valid {
+    border-color: #28a745;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-area > div {
+        flex-direction: column;
+    }
+    
+    .content-area > div > div {
+        flex: 1 1 auto;
+        min-width: auto;
+    }
+}
+</style>
+{% endblock %}

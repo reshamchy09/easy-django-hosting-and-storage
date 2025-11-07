@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Signup | Hostify{% endblock %}
+{% block content %}
+<section class="container">
+    <h2 style="text-align:center;">Create an Account</h2>
+    <form method="post" style="max-width:400px; margin:auto; display:flex; flex-direction:column; gap:15px;">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+        <input type="email" name="email" placeholder="Email" required style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+        <input type="password" name="password" placeholder="Password" required style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+        <button type="submit" style="background:#0d6efd; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer;">Sign Up</button>
+    </form>
+    <p style="text-align:center; margin-top:10px;">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+</section>
+{% endblock %}

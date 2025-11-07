@@ -1,0 +1,797 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{{ project.project_name }} - Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <!-- Header Section with Gradient Background -->
+    <div class="project-header-card mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="project-icon-wrapper">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div>
+                        <h2 class="project-title mb-1">{{ project.project_name }}</h2>
+                        <p class="text-muted mb-0">
+                            <i class="far fa-clock"></i> Created {{ project.created_at|date:"M d, Y" }}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Status Indicators -->
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="status-badge {% if status.status %}status-running{% else %}status-stopped{% endif %}">
+                        <i class="fas fa-circle pulse-dot"></i>
+                        {% if status.status %}Running{% else %}Stopped{% endif %}
+                    </span>
+                    <span class="status-badge status-deployment">
+                        <i class="fas fa-rocket"></i>
+                        {{ project.deployment_status|title }}
+                    </span>
+                    {% if project.is_active %}
+                    <span class="status-badge status-active">
+                        <i class="fas fa-check-circle"></i>
+                        Active
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <a href="{% url 'django_projects' %}" class="btn btn-outline-light btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Access Information Card -->
+            <div class="glass-card access-card mb-4">
+                <div class="card-header-modern">
+                    <h5 class="mb-0">
+                        <i class="fas fa-globe text-primary"></i> Access Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if has_custom_domain %}
+                        <!-- Custom Domain Access -->
+                        <div class="domain-section">
+                            <div class="domain-badge-wrapper">
+                                <span class="domain-badge">
+                                    <i class="fas fa-shield-alt"></i> Custom Domain Active
+                                </span>
+                            </div>
+                            
+                            <div class="url-display-card mb-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="flex-grow-1">
+                                        <label class="url-label">Primary URL</label>
+                                        <a href="{{ primary_url }}" target="_blank" class="url-link">
+                                            {{ primary_url }}
+                                            <i class="fas fa-external-link-alt ms-2"></i>
+                                        </a>
+                                    </div>
+                                    <button class="btn-icon-action" onclick="copyToClipboard('{{ primary_url }}')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {% if fallback_url %}
+                            <div class="url-display-card secondary mb-3">
+                                <label class="url-label">Direct Access (Fallback)</label>
+                                <a href="{{ fallback_url }}" target="_blank" class="url-link secondary">
+                                    {{ fallback_url }}
+                                    <i class="fas fa-external-link-alt ms-2"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="dns-info-card">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="dns-icon">
+                                        <i class="fas fa-network-wired"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-2">DNS Configuration Required</h6>
+                                        <p class="mb-1">{{ dns_instructions }}</p>
+                                        <small class="text-muted">Create an A record pointing to the server IP above</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-outline-danger btn-sm" onclick="removeCustomDomain()">
+                                    <i class="fas fa-times"></i> Remove Custom Domain
+                                </button>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- IP:Port or Subdomain Access -->
+                        <div class="default-access-section">
+                            {% if primary_url %}
+                            <div class="url-display-card mb-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="flex-grow-1">
+                                        <label class="url-label">Access URL</label>
+                                        <a href="{{ primary_url }}" target="_blank" class="url-link">
+                                            {{ primary_url }}
+                                            <i class="fas fa-external-link-alt ms-2"></i>
+                                        </a>
+                                    </div>
+                                    <button class="btn-icon-action" onclick="copyToClipboard('{{ primary_url }}')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <i class="fas fa-server"></i>
+                                    <div>
+                                        <label>Server IP</label>
+                                        <code>{{ server_ip }}</code>
+                                    </div>
+                                </div>
+                                
+                                {% if project.subdomain %}
+                                <div class="info-item">
+                                    <i class="fas fa-tag"></i>
+                                    <div>
+                                        <label>Subdomain</label>
+                                        <code>{{ project.subdomain }}</code>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Add Custom Domain Form -->
+                        <div class="add-domain-section mt-4">
+                            <div class="section-divider">
+                                <span>Or add a custom domain</span>
+                            </div>
+                            
+                            <form id="addDomainForm">
+                                {% csrf_token %}
+                                <div class="domain-input-group">
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-globe"></i>
+                                        <input type="text" 
+                                               class="form-control-modern" 
+                                               id="customDomain" 
+                                               name="custom_domain"
+                                               placeholder="myapp.com or app.mydomain.com"
+                                               required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-add-domain">
+                                        <i class="fas fa-plus"></i> Add Domain
+                                    </button>
+                                </div>
+                                <small class="form-hint">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Enter your domain without http:// or https://
+                                </small>
+                            </form>
+                            <div id="domainResult" class="mt-3"></div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actions Card -->
+            <div class="glass-card actions-card mb-4">
+                <div class="card-header-modern">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sliders-h text-success"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="actions-grid">
+                        {% if status.status %}
+                        <a href="{% url 'restart_django_project' project.id %}" 
+                           class="action-button action-restart"
+                           onclick="return confirm('Restart this project?')">
+                            <i class="fas fa-sync-alt"></i>
+                            <div>
+                                <strong>Restart</strong>
+                                <small>Restart the project</small>
+                            </div>
+                        </a>
+                        {% endif %}
+                        
+                        <button type="button" 
+                                class="action-button action-logs" 
+                                onclick="viewLogs()">
+                            <i class="fas fa-file-alt"></i>
+                            <div>
+                                <strong>View Logs</strong>
+                                <small>Check project logs</small>
+                            </div>
+                        </button>
+                        
+                        <button type="button" 
+                                class="action-button action-update" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#updateModal">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div>
+                                <strong>Update Code</strong>
+                                <small>Deploy new version</small>
+                            </div>
+                        </button>
+                        
+                        <a href="{% url 'delete_django_project' project.id %}" 
+                           class="action-button action-delete"
+                           onclick="return confirm('Are you sure? This will delete all project files and configurations.')">
+                            <i class="fas fa-trash-alt"></i>
+                            <div>
+                                <strong>Delete</strong>
+                                <small>Remove project</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Display -->
+            <div id="logsSection" class="glass-card logs-card mb-4" style="display: none;">
+                <div class="card-header-modern">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-terminal text-info"></i> Project Logs
+                        </h5>
+                        <button class="btn btn-sm btn-outline-light" onclick="refreshLogs()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <pre id="logsContent" class="logs-terminal"></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Project Info Card -->
+            <div class="glass-card info-card mb-4">
+                <div class="card-header-modern">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-info"></i> Project Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="detail-list">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <div>
+                                <label>Project Name</label>
+                                <span>{{ project.project_name }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div>
+                                <label>Database</label>
+                                <span>{{ project_info.database_backend|default:"SQLite3" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <div>
+                                <label>Static Files</label>
+                                {% if project_info.static_configured %}
+                                <span class="badge-mini badge-success">Configured</span>
+                                {% else %}
+                                <span class="badge-mini badge-warning">Not Configured</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <label>Created</label>
+                                <span>{{ project.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Card -->
+            <div class="glass-card stats-card">
+                <div class="card-header-modern">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-warning"></i> Quick Stats
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <div class="stat-icon stat-icon-primary">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <label>Uptime Status</label>
+                            <strong>{% if status.status %}Active{% else %}Inactive{% endif %}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon stat-icon-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <label>Deployment</label>
+                            <strong>{{ project.deployment_status|title }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon stat-icon-info">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div>
+                            <label>Project Type</label>
+                            <strong>Django Application</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Code Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-cloud-upload-alt"></i> Update Project Code
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="updateForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="alert-modern alert-info mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Ready to update?</strong>
+                            <p class="mb-0">Upload a ZIP file with your updated Django project. We'll redeploy it automatically.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="projectFile" class="form-label-modern">
+                            <i class="fas fa-file-archive"></i> Project File (ZIP)
+                        </label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" 
+                                   class="form-control-file-modern" 
+                                   id="projectFile" 
+                                   name="project_file"
+                                   accept=".zip"
+                                   required>
+                            <div class="file-upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose a file or drag it here</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="updateNotes" class="form-label-modern">
+                            <i class="fas fa-sticky-note"></i> Update Notes (Optional)
+                        </label>
+                        <textarea class="form-control-modern" 
+                                  id="updateNotes" 
+                                  name="update_notes"
+                                  rows="3"
+                                  placeholder="Describe what changed in this update..."></textarea>
+                    </div>
+                    
+                    <div id="updateProgress" class="progress-modern" style="display: none;">
+                        <div class="progress-bar-modern">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <span class="progress-text">
+                            <i class="fas fa-spinner fa-spin"></i> Updating project...
+                        </span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Deploy Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Copy to clipboard function
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target.closest('button');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(err => {
+        showNotification('Failed to copy: ' + err, 'error');
+    });
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    // Implementation depends on your notification system
+    alert(message);
+}
+
+// Add Custom Domain
+document.getElementById('addDomainForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const domain = document.getElementById('customDomain').value.trim();
+    const resultDiv = document.getElementById('domainResult');
+    const submitBtn = this.querySelector('button[type="submit"]');
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Configuring...';
+    
+    try {
+        const response = await fetch('{% url "update_custom_domain" project.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `custom_domain=${encodeURIComponent(domain)}`
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <div class="alert-modern alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>${data.message}</strong>
+                        <p class="mb-1"><strong>URL:</strong> <a href="${data.access_url}" target="_blank">${data.access_url}</a></p>
+                        <p class="mb-0"><strong>DNS:</strong> ${data.dns_instructions}</p>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => location.reload(), 3000);
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert-modern alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>${data.error}</div>
+                </div>
+            `;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Domain';
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `
+            <div class="alert-modern alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>Error: ${error.message}</div>
+            </div>
+        `;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Domain';
+    }
+});
+
+// Remove Custom Domain
+async function removeCustomDomain() {
+    if (!confirm('Remove custom domain? Your project will be accessible via IP:port or subdomain instead.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('{% url "remove_custom_domain" project.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(`${data.message}\n\nNew access URL: ${data.new_access_url}`, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showNotification(`Error: ${data.error}`, 'error');
+        }
+    } catch (error) {
+        showNotification(`Error: ${error.message}`, 'error');
+    }
+}
+
+// View Logs
+async function viewLogs() {
+    const logsSection = document.getElementById('logsSection');
+    const logsContent = document.getElementById('logsContent');
+    
+    logsSection.style.display = 'block';
+    logsContent.textContent = 'Loading logs...';
+    
+    try {
+        const response = await fetch('{% url "django_project_logs" project.id %}');
+        const data = await response.json();
+        
+        if (data.success) {
+            logsContent.textContent = data.logs || 'No logs available';
+        } else {
+            logsContent.textContent = `Error: ${data.error}`;
+        }
+    } catch (error) {
+        logsContent.textContent = `Error loading logs: ${error.message}`;
+    }
+    
+    logsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Refresh Logs
+function refreshLogs() {
+    viewLogs();
+}
+
+// Update Project Form
+document.getElementById('updateForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const progressDiv = document.getElementById('updateProgress');
+    const submitBtn = this.querySelector('button[type="submit"]');
+    
+    submitBtn.disabled = true;
+    progressDiv.style.display = 'block';
+    
+    try {
+        const response = await fetch('{% url "update_django_project" project.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(`✅ ${data.message}\n\nAccess at: ${data.domain}`, 'success');
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            showNotification(`❌ ${data.error}`, 'error');
+            submitBtn.disabled = false;
+            progressDiv.style.display = 'none';
+        }
+    } catch (error) {
+        showNotification(`❌ Error: ${error.message}`, 'error');
+        submitBtn.disabled = false;
+        progressDiv.style.display = 'none';
+    }
+});
+
+// File input handling
+document.getElementById('projectFile')?.addEventListener('change', function(e) {
+    const wrapper = this.closest('.file-upload-wrapper');
+    const placeholder = wrapper.querySelector('.file-upload-placeholder span');
+    
+    if (this.files.length > 0) {
+        placeholder.textContent = this.files[0].name;
+        wrapper.classList.add('has-file');
+    } else {
+        placeholder.textContent = 'Choose a file or drag it here';
+        wrapper.classList.remove('has-file');
+    }
+});
+</script>
+
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --danger-gradient: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+    --info-gradient: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+    --warning-gradient: linear-gradient(135deg, #FBAB7E 0%, #F7CE68 100%);
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Project Header --- */
+.project-header-card {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.project-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    backdrop-filter: blur(10px);
+}
+
+.project-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    transform: translateX(-4px);
+}
+
+/* --- Status Badges --- */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.status-running {
+    background: rgba(52, 211, 153, 0.2);
+    border-color: rgba(52, 211, 153, 0.4);
+}
+
+.status-stopped {
+    background: rgba(248, 113, 113, 0.2);
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.pulse-dot {
+    font-size: 0.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* --- Glass Card --- */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.glass-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+/* --- Card Header --- */
+.card-header-modern {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
+}
+
+.card-header-modern h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* --- URL Display Card --- */
+.url-display-card {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.url-display-card:hover {
+    border-color: rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.url-display-card.secondary {
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.1), rgba(156, 163, 175, 0.1));
+    border-color: rgba(107, 114, 128, 0.2);
+}
+
+.url-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.url {
+    display: inline-block;
+    color: #667eea;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.url:hover {
+    color: #764ba2;
+    transform: translateX(4px);
+}
+</style>
+{% endblock %}

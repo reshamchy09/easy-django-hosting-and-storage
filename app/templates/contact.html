@@ -1,0 +1,1201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us | Hostify - Get Help & Support{% endblock %}
+
+{% block content %}
+<style>
+/* General Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Section */
+.contact-hero {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.contact-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.contact-option {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.contact-option:hover {
+    transform: translateY(-5px);
+}
+
+.option-icon {
+    font-size: 2.5rem;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+}
+
+.contact-option h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.contact-btn {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.contact-btn:hover {
+    background: #2563eb;
+}
+
+/* Contact Methods Section */
+.contact-methods {
+    padding: 4rem 0;
+}
+
+.methods-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .methods-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Contact Form */
+.contact-form-section {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.contact-form-section p {
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group.focused label {
+    color: #3b82f6;
+}
+
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.character-count {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: right;
+    margin-top: 0.5rem;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    margin-right: 0.5rem;
+}
+
+.checkmark {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+    position: relative;
+}
+
+.checkbox-label input:checked + .checkmark {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.checkbox-label input:checked + .checkmark:after {
+    content: '\2713';
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.submit-btn:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+}
+
+.success-message {
+    background: #f0fdf4;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.success-message i {
+    color: #16a34a;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.success-message h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.success-message p {
+    color: #666;
+}
+
+/* Contact Info Section */
+.contact-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-info-card,
+.quick-help-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-info-card h2,
+.quick-help-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    color: #3b82f6;
+}
+
+.info-content h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-content p {
+    color: #666;
+}
+
+.support-hours {
+    font-style: italic;
+    color: #888;
+}
+
+.social-links {
+    margin-top: 2rem;
+}
+
+.social-links h4 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+.social-icon:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.help-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.help-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.help-link:hover {
+    text-decoration: underline;
+}
+
+/* FAQ Section */
+.contact-faq {
+    padding: 4rem 0;
+    background: #ffffff;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.faq-item {
+    border-bottom: 1px solid #eee;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 0;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.faq-question i {
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+    padding-bottom: 1rem;
+}
+
+.faq-answer p {
+    color: #666;
+}
+
+/* Office Locations */
+.office-locations {
+    padding: 4rem 0;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.location-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.location-flag {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.location-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.location-card p {
+    color: #666;
+}
+
+/* Emergency Support */
+.emergency-support {
+    background: #fef2f2;
+    padding: 2rem 0;
+}
+
+.emergency-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.emergency-icon {
+    font-size: 2rem;
+    color: #dc3545;
+}
+
+.emergency-text h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.emergency-text p {
+    color: #666;
+}
+
+.emergency-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.emergency-btn:hover {
+    background: #b91c1c;
+}
+
+/* Priority Level Colors */
+.priority-low { border-color: #16a34a; }
+.priority-medium { border-color: #f59e0b; }
+.priority-high { border-color: #dc3545; }
+.priority-urgent { border-color: #991b1b; }
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .contact-option {
+        padding: 1.5rem;
+    }
+    
+    .contact-form-section,
+    .contact-info-card,
+    .quick-help-card {
+        padding: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="contact-hero fade-in">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Get in Touch</h1>
+            <p>We're here to help! Reach out to our friendly support team 24/7 for assistance with your hosting needs.</p>
+        </div>
+        <div class="contact-options">
+            <div class="contact-option">
+                <div class="option-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Live Chat</h3>
+                <p>Instant help from our experts</p>
+                <button class="contact-btn" onclick="startLiveChat()">Start Chat</button>
+            </div>
+            <div class="contact-option">
+                <div class="option-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <h3>Phone Support</h3>
+                <p>Speak directly with our team</p>
+                <a href="tel:+1-800-HOST-247" class="contact-btn">Call Now</a>
+            </div>
+            <div class="contact-option">
+                <div class="option-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h3>Support Ticket</h3>
+                <p>Submit a detailed request</p>
+                <button class="contact-btn" onclick="scrollToForm()">Create Ticket</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Methods Section -->
+<section class="contact-methods">
+    <div class="container">
+        <div class="methods-grid">
+            <!-- Contact Form -->
+            <div class="contact-form-section fade-in">
+                <h2>Send us a Message</h2>
+                <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+                
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Company/Organization</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a topic</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="billing">Billing Question</option>
+                                <option value="sales">Sales & Plans</option>
+                                <option value="migration">Website Migration</option>
+                                <option value="domain">Domain Services</option>
+                                <option value="partnership">Partnership Opportunity</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Priority Level</label>
+                            <select id="priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="6" placeholder="Please describe your inquiry in detail..." required></textarea>
+                        <span class="error-message"></span>
+                        <div class="character-count">
+                            <span id="charCount">0</span>/1000 characters
+                        </div>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            <span class="checkmark"></span>
+                            Subscribe to our newsletter for hosting tips and updates
+                        </label>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <span class="checkmark"></span>
+                            I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a> *
+                        </label>
+                        <span class="error-message"></span>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">Send Message</span>
+                        <span class="btn-loading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Sending...
+                        </span>
+                    </button>
+                </form>
+                
+                <!-- Success Message -->
+                <div class="success-message" id="successMessage" style="display: none;">
+                    <div class="success-content">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Message Sent Successfully!</h3>
+                        <p>Thank you for contacting us. We'll get back to you within 24 hours.</p>
+                        <p><strong>Ticket ID:</strong> <span id="ticketId">#HF-2024-001</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="contact-info-section fade-in">
+                <div class="contact-info-card">
+                    <h2>Contact Information</h2>
+                    <div class="info-items">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Headquarters</h4>
+                                <p>123 Tech Boulevard<br>San Francisco, CA 94105<br>United States</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Phone Support</h4>
+                                <p><strong>US/Canada:</strong> <a href="tel:+1-800-HOST-247">+1 (800) HOST-247</a></p>
+                                <p><strong>International:</strong> <a href="tel:+1-415-555-0123">+1 (415) 555-0123</a></p>
+                                <p class="support-hours">24/7 Support Available</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Email Support</h4>
+                                <p><strong>General:</strong> <a href="mailto:support@hostify.com">support@hostify.com</a></p>
+                                <p><strong>Sales:</strong> <a href="mailto:sales@hostify.com">sales@hostify.com</a></p>
+                                <p><strong>Billing:</strong> <a href="mailto:billing@hostify.com">billing@hostify.com</a></p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Business Hours</h4>
+                                <p><strong>Phone Sales:</strong> Mon-Fri 8AM-8PM PST</p>
+                                <p><strong>Technical Support:</strong> 24/7/365</p>
+                                <p><strong>Live Chat:</strong> 24/7/365</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <h4>Follow Us</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-icon" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="social-icon" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Help -->
+                <div class="quick-help-card">
+                    <h3>Need Quick Help?</h3>
+                    <div class="help-links">
+                        <a href="#" class="help-link">
+                            <i class="fas fa-book"></i>
+                            <span>Knowledge Base</span>
+                        </a>
+                        <a href="#" class="help-link">
+                            <i class="fas fa-video"></i>
+                            <span>Video Tutorials</span>
+                        </a>
+                        <a href="#" class="help-link">
+                            <i class="fas fa-download"></i>
+                            <span>Download Center</span>
+                        </a>
+                        <a href="#" class="help-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Server Status</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="contact-faq">
+    <div class="container">
+        <h2 class="section-title fade-in">Frequently Asked Questions</h2>
+        <p class="section-subtitle fade-in">Quick answers to common questions</p>
+        
+        <div class="faq-grid">
+            <div class="faq-column fade-in">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How quickly will I receive a response?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We respond to all inquiries within 24 hours. For urgent technical issues, our live chat and phone support are available 24/7 with response times under 5 minutes.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What information should I include in my support request?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Please include your domain name, account email, detailed description of the issue, steps you've already taken, and any error messages. Screenshots are also helpful.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Do you offer phone support in multiple languages?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! We offer phone support in English, Spanish, French, and German. Live chat support is available in 12 languages.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Can I schedule a consultation call?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! Contact our sales team to schedule a free consultation call. We'll discuss your hosting needs and recommend the best solution for your business.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-column fade-in">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is technical support included with all plans?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, all hosting plans include free technical support. Higher-tier plans receive priority support with faster response times and phone support.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How can I check the status of my support ticket?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can check your ticket status in your client portal or by using the ticket ID we provide. You'll also receive email updates on any progress.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Do you provide migration assistance?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! We offer free website migration for all hosting plans. Our migration experts will transfer your site with zero downtime.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What if I need help outside business hours?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our live chat and emergency phone support are available 24/7. For non-urgent matters submitted outside business hours, we'll respond first thing the next business day.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Office Locations -->
+<section class="office-locations">
+    <div class="container">
+        <h2 class="section-title fade-in">Our Global Presence</h2>
+        <div class="locations-grid">
+            <div class="location-card fade-in">
+                <div class="location-flag">🇺🇸</div>
+                <h3>United States</h3>
+                <p><strong>San Francisco (HQ)</strong><br>
+                123 Tech Boulevard<br>
+                San Francisco, CA 94105</p>
+                <p><strong>New York Office</strong><br>
+                456 Business Ave<br>
+                New York, NY 10001</p>
+            </div>
+            
+            <div class="location-card fade-in">
+                <div class="location-flag">🇬🇧</div>
+                <h3>United Kingdom</h3>
+                <p><strong>London Office</strong><br>
+                789 Tech Street<br>
+                London EC1A 1BB<br>
+                United Kingdom</p>
+            </div>
+            
+            <div class="location-card fade-in">
+                <div class="location-flag">🇩🇪</div>
+                <h3>Germany</h3>
+                <p><strong>Berlin Office</strong><br>
+                Berliner Straße 123<br>
+                10115 Berlin<br>
+                Germany</p>
+            </div>
+            
+            <div class="location-card fade-in">
+                <div class="location-flag">🇸🇬</div>
+                <h3>Singapore</h3>
+                <p><strong>Singapore Office</strong><br>
+                1 Marina Boulevard<br>
+                Singapore 018989<br>
+                Singapore</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Emergency Support Banner -->
+<section class="emergency-support">
+    <div class="container">
+        <div class="emergency-content fade-in">
+            <div class="emergency-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="emergency-text">
+                <h3>Emergency Support</h3>
+                <p>Experiencing a critical issue? Our emergency support line is available 24/7.</p>
+            </div>
+            <div class="emergency-action">
+                <a href="tel:+1-800-HOST-911" class="emergency-btn">
+                    <i class="fas fa-phone"></i>
+                    Call Emergency: +1 (800) HOST-911
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Form Validation and Submission
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (validateForm()) {
+        submitForm();
+    }
+});
+
+// Character count for message field
+document.getElementById('message').addEventListener('input', function() {
+    const charCount = this.value.length;
+    const maxLength = 1000;
+    document.getElementById('charCount').textContent = charCount;
+    
+    if (charCount > maxLength) {
+        this.value = this.value.substring(0, maxLength);
+        document.getElementById('charCount').textContent = maxLength;
+    }
+    
+    // Change color based on character count
+    const countElement = document.getElementById('charCount');
+    if (charCount > maxLength * 0.9) {
+        countElement.style.color = '#dc3545';
+    } else if (charCount > maxLength * 0.7) {
+        countElement.style.color = '#ffc107';
+    } else {
+        countElement.style.color = '#28a745';
+    }
+});
+
+// Form validation
+function validateForm() {
+    const form = document.getElementById('contactForm');
+    const formData = new FormData(form);
+    let isValid = true;
+    
+    // Clear previous error messages
+    document.querySelectorAll('.error-message').forEach(error => {
+        error.textContent = '';
+        error.parentElement.classList.remove('error');
+    });
+    
+    // Required field validation
+    const requiredFields = ['firstName', 'lastName', 'email', 'subject', 'message', 'terms'];
+    
+    requiredFields.forEach(fieldName => {
+        const field = form.querySelector(`[name="${fieldName}"]`);
+        const value = fieldName === 'terms' ? field.checked : formData.get(fieldName);
+        
+        if (!value || (typeof value === 'string' && value.trim() === '')) {
+            showError(field, 'This field is required');
+            isValid = false;
+        }
+    });
+    
+    // Email validation
+    const email = formData.get('email');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+        showError(form.querySelector('[name="email"]'), 'Please enter a valid email address');
+        isValid = false;
+    }
+    
+    // Phone validation (if provided)
+    const phone = formData.get('phone');
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    if (phone && !phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''))) {
+        showError(form.querySelector('[name="phone"]'), 'Please enter a valid phone number');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+function showError(field, message) {
+    const errorElement = field.parentElement.querySelector('.error-message');
+    errorElement.textContent = message;
+    field.parentElement.classList.add('error');
+}
+
+// Form submission
+function submitForm() {
+    const submitBtn = document.querySelector('.submit-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    
+    // Show loading state
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    
+    // Simulate form submission
+    setTimeout(() => {
+        // Generate random ticket ID
+        const ticketId = '#HF-' + new Date().getFullYear() + '-' + 
+                        String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+        
+        document.getElementById('ticketId').textContent = ticketId;
+        
+        // Hide form and show success message
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        
+        // Scroll to success message
+        document.getElementById('successMessage').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+        
+        // Reset button state
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+        
+    }, 2000); // 2 second delay to simulate network request
+}
+
+// FAQ functionality
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const faqItem = this.parentElement;
+        const wasActive = faqItem.classList.contains('active');
+        
+        // Close all FAQ items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Open clicked item if it wasn't active
+        if (!wasActive) {
+            faqItem.classList.add('active');
+        }
+    });
+});
+
+// Live chat function
+function startLiveChat() {
+    // In a real application, this would integrate with your chat system
+    alert('Live chat would be integrated here. This would typically open a chat widget like Intercom, Zendesk Chat, or similar.');
+}
+
+// Scroll to form function
+function scrollToForm() {
+    document.getElementById('contactForm').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+// Smooth reveal animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Apply fade-in animation to all elements with fade-in class
+document.querySelectorAll('.fade-in').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+});
+
+// Form field animations
+document.querySelectorAll('input, textarea, select').forEach(field => {
+    field.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+    });
+    
+    field.addEventListener('blur', function() {
+        if (this.value === '') {
+            this.parentElement.classList.remove('focused');
+        }
+    });
+    
+    // Check if field has value on page load
+    if (field.value !== '') {
+        field.parentElement.classList.add('focused');
+    }
+});
+
+// Real-time validation feedback
+document.querySelectorAll('input[required], textarea[required], select[required]').forEach(field => {
+    field.addEventListener('blur', function() {
+        if (this.value.trim() === '') {
+            this.parentElement.classList.add('error');
+            this.parentElement.querySelector('.error-message').textContent = 'This field is required';
+        } else {
+            this.parentElement.classList.remove('error');
+            this.parentElement.querySelector('.error-message').textContent = '';
+        }
+    });
+    
+    field.addEventListener('input', function() {
+        if (this.parentElement.classList.contains('error') && this.value.trim() !== '') {
+            this.parentElement.classList.remove('error');
+            this.parentElement.querySelector('.error-message').textContent = '';
+        }
+    });
+});
+
+// Email field real-time validation
+document.getElementById('email').addEventListener('blur', function() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (this.value && !emailRegex.test(this.value)) {
+        showError(this, 'Please enter a valid email address');
+    }
+});
+
+// Priority level color coding
+document.getElementById('priority').addEventListener('change', function() {
+    this.className = `priority-${this.value}`;
+});
+
+// Initialize priority color
+document.getElementById('priority').className = 'priority-medium';
+</script>
+
+{% endblock %}

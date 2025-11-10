@@ -1,0 +1,43 @@
+{% extends "dashboard_base.html" %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <h2>Hosted Projects History</h2>
+    {% if projects %}
+      <table border="1" cellpadding="10">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Repository</th>
+            <th>Port</th>
+            <th>Status</th>
+            <th>Visit</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in projects %}
+          <tr>
+            <td>{{ project.name }}</td>
+            <td><a href="{{ project.repo_url }}" target="_blank">{{ project.repo_url }}</a></td>
+            <td>{{ project.port }}</td>
+            <td>{% if project.running %}Running{% else %}Stopped{% endif %}</td>
+            <td>
+              {% if project.running %}
+                <a href="{{ project.host_url(request) }}" target="_blank">Visit</a>
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
+            <td>{{ project.created_at|date:"Y-m-d H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No projects hosted yet.</p>
+    {% endif %}
+  {% else %}
+    <p>You must <a href="{% url 'login' %}">log in</a> to see hosted projects.</p>
+  {% endif %}
+{% endblock %}

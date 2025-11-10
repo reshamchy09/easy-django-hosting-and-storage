@@ -123,12 +123,23 @@ def deploy_django_view(request):
                 if len(safe_name) < 3:
                     safe_name = f"user_project_{uuid.uuid4().hex[:6]}"
                 
-                # Generate subdomain format
+                # Generate subdomain format with uniqueness check
                 BASE_DOMAIN = "samitchaudhary.com.np"
-                subdomain = safe_name.lower().replace('_', '-')
+                subdomain_base = safe_name.lower().replace('_', '-')
+                subdomain = f"{subdomain_base}.{BASE_DOMAIN}"
                 
-                # Set the subdomain field
-                django_project.subdomain = f"{subdomain}.{BASE_DOMAIN}"
+                # Check if subdomain exists and make it unique
+                counter = 1
+                while DjangoProject.objects.filter(subdomain=subdomain).exists():
+                    subdomain = f"{subdomain_base}-{counter}.{BASE_DOMAIN}"
+                    counter += 1
+                    if counter > 100:  # Safety limit
+                        subdomain = f"{subdomain_base}-{uuid.uuid4().hex[:6]}.{BASE_DOMAIN}"
+                        break
+                
+                # Set the unique subdomain field
+                django_project.subdomain = subdomain
+                logger.info(f"Generated unique subdomain: {subdomain}")
 
                 # Save the project to get the file path
                 django_project.save()
@@ -1401,3 +1412,110 @@ def help_view(request):
     website details, and floating WhatsApp button.
     """
     return render(request, 'help.html')
+
+
+
+
+
+
+
+
+
+################Github Deployment Metrics##########################################
+import sys
+import subprocess
+import shlex
+
+
+from git import Repo, GitCommandError
+from .forms import DeployForm
+from .models import DeployedProject
+
+PYTHON = sys.executable  # ensures using same python
+
+
+def github_view(request):
+    """
+    Simple deploy: clone/pull repo, install requirements (if exists),
+    run migrations and collectstatic (if Django project),
+    and start gunicorn on the requested port.
+
+    WARNING: This is a demo. Input is minimally validated.
+    """
+    if request.method == "POST":
+        form = DeployForm(request.POST)
+        if form.is_valid():
+            repo_url = form.cleaned_data["repo_url"].strip()
+            port = form.cleaned_data["port"]
+
+            # derive project name
+            project_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
+            project_dir = settings.USER_PROJECTS_DIR / project_name
+
+            try:
+                if not project_dir.exists():
+                    # Clone repo
+                    Repo.clone_from(repo_url, project_dir)
+                    cloned = True
+                else:
+                    repo = Repo(str(project_dir))
+                    repo.remotes.origin.pull()
+                    cloned = False
+            except GitCommandError as e:
+                messages.error(request, f"Git error: {e}")
+                return render(request, "hosting/deploy_form.html", {"form": form})
+
+            # install requirements if requirements.txt exists
+            req_file = project_dir / "requirements.txt"
+            if req_file.exists():
+                try:
+                    # pip install -r requirements.txt
+                    cmd = [PYTHON, "-m", "pip", "install", "-r", str(req_file)]
+                    subprocess.run(cmd, check=True)
+                except subprocess.CalledProcessError as e:
+                    messages.warning(request, f"pip install failed: {e}")
+            
+            # If manage.py exists, attempt migrate and collectstatic
+            manage_py = project_dir / "manage.py"
+            if manage_py.exists():
+                try:
+                    subprocess.run([PYTHON, str(manage_py), "migrate", "--noinput"], cwd=str(project_dir), check=True)
+                    subprocess.run([PYTHON, str(manage_py), "collectstatic", "--noinput"], cwd=str(project_dir), check=True)
+                except subprocess.CalledProcessError as e:
+                    messages.warning(request, f"manage.py commands had issues: {e}")
+
+            # start gunicorn process binding to 0.0.0.0:port
+            # Note: for production use systemd / process manager is recommended
+            wsgi_module = f"{project_name}.wsgi:application"
+            gunicorn_cmd = [PYTHON, "-m", "gunicorn", "--bind", f"0.0.0.0:{port}", wsgi_module]
+
+            # ensure not starting duplicate process for same port (very simple check)
+            existing = DeployedProject.objects.filter(port=port)
+            if existing.exists():
+                messages.error(request, f"Port {port} already in use by another deployed project.")
+                return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+            try:
+                # spawn process (detached)
+                # Use subprocess.Popen so Django doesn't wait
+                process = subprocess.Popen(gunicorn_cmd, cwd=str(project_dir), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+                # record in DB
+                dp = DeployedProject.objects.create(name=project_name, repo_url=repo_url, port=port, running=True)
+                messages.success(request, f"Deployed {project_name} on port {port}. (PID={process.pid})")
+                return redirect("deploy_success", pk=dp.pk)
+            except Exception as e:
+                messages.error(request, f"Failed to start gunicorn: {e}")
+    else:
+        form = DeployForm()
+    return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+from django.shortcuts import get_object_or_404
+
+def github_success(request, pk):
+    dp = get_object_or_404(DeployedProject, pk=pk)
+    return render(request, "github/hosting/deploy_success.html", {"project": dp})
+
+def hosted_projects(request):
+    projects = DeployedProject.objects.order_by('-created_at')
+    return render(request, "github/hosting/hosted_projects.html", {"projects": projects})

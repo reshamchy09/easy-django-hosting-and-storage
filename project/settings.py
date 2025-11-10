@@ -133,6 +133,10 @@ STATICFILES_DIRS = [
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Directory where cloned user projects will be stored (github)
+USER_PROJECTS_DIR = Path(os.getenv("USER_PROJECTS_DIR", BASE_DIR / "user_projects"))
+USER_PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

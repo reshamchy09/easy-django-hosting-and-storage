@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Django WebHost - Demo</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width:900px; margin:2rem auto; padding:1rem;}
+      .card { border:1px solid #ddd; padding:1rem; border-radius:8px; }
+      input[type=text], input[type=url], input[type=number] { width:100%; padding:8px; margin:8px 0; }
+      button { padding:8px 12px; cursor:pointer; }
+      .messages { margin-bottom:1rem; }
+      .success { color: green; }
+      .error { color: red; }
+    </style>
+  </head>
+  <body>
+    <h1>Django WebHost — Demo</h1>
+    <div class="messages">
+      {% for message in messages %}
+        <div class="{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    <div class="card">
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

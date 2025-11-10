@@ -1,0 +1,52 @@
+{% extends "dashboard_base.html" %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <h2>Deploy a GitHub repo</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Deploy</button>
+    </form>
+    <hr>
+  {% else %}
+    <p>You must <a href="{% url 'login' %}">log in</a> to deploy a repository.</p>
+  {% endif %}
+
+  {% if projects %}
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Repo</th>
+        <th>Port</th>
+        <th>Status</th>
+        <th>Visit</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in projects %}
+      <tr>
+        <td>{{ project.name }}</td>
+        <td><a href="{{ project.repo_url }}" target="_blank">{{ project.repo_url }}</a></td>
+        <td>{{ project.port }}</td>
+        <td>{% if project.running %}Running{% else %}Stopped{% endif %}</td>
+        <td>
+          {% if project.running %}
+            <a href="{{ project.host_url }}" target="_blank">Visit</a>
+
+          {% else %}
+            N/A
+          {% endif %}
+        </td>
+        <td>{{ project.created_at|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No projects hosted yet.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Django Setup Commands for Ubuntu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #222;
+    }
+
+    .command-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .command-number {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .command {
+      font-family: monospace;
+      background: #f8f8f8;
+      padding: 10px;
+      border-radius: 5px;
+      display: block;
+      overflow-x: auto;
+      margin-bottom: 8px;
+    }
+
+    .copy-btn {
+      padding: 7px 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    .copied-message {
+      color: green;
+      font-size: 0.85em;
+      display: none;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Django Setup Commands for Ubuntu/Linux</h2>
+
+  <!-- 1 -->
+  <div class="command-box">
+    <div class="command-number">1. Update and Install Python & Pip</div>
+    <span id="cmd1" class="command">sudo apt update && sudo apt install python3 python3-pip python3-venv -y</span>
+    <button class="copy-btn" onclick="copyCommand('cmd1')">Click to Copy</button>
+    <div id="msg1" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="command-box">
+    <div class="command-number">2. Create Virtual Environment</div>
+    <span id="cmd2" class="command">python3 -m venv myenv</span>
+    <button class="copy-btn" onclick="copyCommand('cmd2')">Click to Copy</button>
+    <div id="msg2" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="command-box">
+    <div class="command-number">3. Activate Virtual Environment</div>
+    <span id="cmd3" class="command">source myenv/bin/activate</span>
+    <button class="copy-btn" onclick="copyCommand('cmd3')">Click to Copy</button>
+    <div id="msg3" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="command-box">
+    <div class="command-number">4. Install Django</div>
+    <span id="cmd4" class="command">pip install django</span>
+    <button class="copy-btn" onclick="copyCommand('cmd4')">Click to Copy</button>
+    <div id="msg4" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="command-box">
+    <div class="command-number">5. Create Django Project</div>
+    <span id="cmd5" class="command">django-admin startproject myproject</span>
+    <button class="copy-btn" onclick="copyCommand('cmd5')">Click to Copy</button>
+    <div id="msg5" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="command-box">
+    <div class="command-number">6. Navigate into Project Folder</div>
+    <span id="cmd6" class="command">cd myproject</span>
+    <button class="copy-btn" onclick="copyCommand('cmd6')">Click to Copy</button>
+    <div id="msg6" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="command-box">
+    <div class="command-number">7. Start New App</div>
+    <span id="cmd7" class="command">python3 manage.py startapp myapp</span>
+    <button class="copy-btn" onclick="copyCommand('cmd7')">Click to Copy</button>
+    <div id="msg7" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="command-box">
+    <div class="command-number">8. Make Migrations</div>
+    <span id="cmd8" class="command">python3 manage.py makemigrations</span>
+    <button class="copy-btn" onclick="copyCommand('cmd8')">Click to Copy</button>
+    <div id="msg8" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="command-box">
+    <div class="command-number">9. Apply Migrations</div>
+    <span id="cmd9" class="command">python3 manage.py migrate</span>
+    <button class="copy-btn" onclick="copyCommand('cmd9')">Click to Copy</button>
+    <div id="msg9" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 10 -->
+  <div class="command-box">
+    <div class="command-number">10. Create Superuser</div>
+    <span id="cmd10" class="command">python3 manage.py createsuperuser</span>
+    <button class="copy-btn" onclick="copyCommand('cmd10')">Click to Copy</button>
+    <div id="msg10" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 11 -->
+  <div class="command-box">
+    <div class="command-number">11. Run Development Server</div>
+    <span id="cmd11" class="command">python3 manage.py runserver</span>
+    <button class="copy-btn" onclick="copyCommand('cmd11')">Click to Copy</button>
+    <div id="msg11" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 12 -->
+  <div class="command-box">
+    <div class="command-number">12. Collect Static Files</div>
+    <span id="cmd12" class="command">python3 manage.py collectstatic</span>
+    <button class="copy-btn" onclick="copyCommand('cmd12')">Click to Copy</button>
+    <div id="msg12" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 13 -->
+  <div class="command-box">
+    <div class="command-number">13. Freeze Installed Packages</div>
+    <span id="cmd13" class="command">pip freeze > requirements.txt</span>
+    <button class="copy-btn" onclick="copyCommand('cmd13')">Click to Copy</button>
+    <div id="msg13" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 14 -->
+  <div class="command-box">
+    <div class="command-number">14. Install Gunicorn (Production)</div>
+    <span id="cmd14" class="command">pip install gunicorn</span>
+    <button class="copy-btn" onclick="copyCommand('cmd14')">Click to Copy</button>
+    <div id="msg14" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 15 -->
+  <div class="command-box">
+    <div class="command-number">15. Run Gunicorn Server</div>
+    <span id="cmd15" class="command">gunicorn --bind 0.0.0.0:8000 myproject.wsgi</span>
+    <button class="copy-btn" onclick="copyCommand('cmd15')">Click to Copy</button>
+    <div id="msg15" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 16 -->
+  <div class="command-box">
+    <div class="command-number">16. Install WhiteNoise for Static Files</div>
+    <span id="cmd16" class="command">pip install whitenoise</span>
+    <button class="copy-btn" onclick="copyCommand('cmd16')">Click to Copy</button>
+    <div id="msg16" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 17 -->
+  <div class="command-box">
+    <div class="command-number">17. Install Useful Django Packages</div>
+    <span id="cmd17" class="command">pip install djangorestframework pillow psycopg2-binary</span>
+    <button class="copy-btn" onclick="copyCommand('cmd17')">Click to Copy</button>
+    <div id="msg17" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 18 -->
+  <div class="command-box">
+    <div class="command-number">18. Deactivate Virtual Environment</div>
+    <span id="cmd18" class="command">deactivate</span>
+    <button class="copy-btn" onclick="copyCommand('cmd18')">Click to Copy</button>
+    <div id="msg18" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 19 -->
+  <div class="command-box">
+    <div class="command-number">19. Run Server on Public IP</div>
+    <span id="cmd19" class="command">python3 manage.py runserver 0.0.0.0:8000</span>
+    <button class="copy-btn" onclick="copyCommand('cmd19')">Click to Copy</button>
+    <div id="msg19" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- 20 -->
+  <div class="command-box">
+    <div class="command-number">20. Install All from requirements.txt</div>
+    <span id="cmd20" class="command">pip install -r requirements.txt</span>
+    <button class="copy-btn" onclick="copyCommand('cmd20')">Click to Copy</button>
+    <div id="msg20" class="copied-message">Copied!</div>
+  </div>
+
+   <!-- Local Setup -->
+  <div class="command-box">
+    <div class="command-number">21. Update and Install Essentials</div>
+    <span id="cmd21" class="command">sudo apt update && sudo apt install python3 python3-venv python3-pip -y</span>
+    <button class="copy-btn" onclick="copyCommand('cmd21')">Copy</button>
+    <div id="msg21" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">22. Create and Activate Virtual Environment</div>
+    <span id="cmd22" class="command">python3 -m venv myenv && source myenv/bin/activate</span>
+    <button class="copy-btn" onclick="copyCommand('cmd22')">Copy</button>
+    <div id="msg22" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">23. Install Django & Gunicorn</div>
+    <span id="cmd23" class="command">pip install django gunicorn</span>
+    <button class="copy-btn" onclick="copyCommand('cmd23')">Copy</button>
+    <div id="msg23" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">24. Start Project and App</div>
+    <span id="cmd24" class="command">django-admin startproject myproject && cd myproject && python3 manage.py startapp myapp</span>
+    <button class="copy-btn" onclick="copyCommand('cmd24')">Copy</button>
+    <div id="msg24" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">25. Migrate and Create Superuser</div>
+    <span id="cmd25" class="command">python3 manage.py migrate && python3 manage.py createsuperuser</span>
+    <button class="copy-btn" onclick="copyCommand('cmd25')">Copy</button>
+    <div id="msg25" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- Gunicorn Setup -->
+  <div class="command-box">
+    <div class="command-number">6. Test Gunicorn Server</div>
+    <span id="cmd26" class="command">gunicorn --bind 0.0.0.0:8000 myproject.wsgi</span>
+    <button class="copy-btn" onclick="copyCommand('cmd26')">Copy</button>
+    <div id="msg26" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">27. Create Gunicorn Service</div>
+    <span id="cmd27" class="command">sudo nano /etc/systemd/system/gunicorn.service</span>
+    <button class="copy-btn" onclick="copyCommand('cmd27')">Copy</button>
+    <div id="msg27" class="copied-message">Copied!</div>
+    <pre class="command">[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/myproject
+ExecStart=/home/ubuntu/myenv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/myproject/gunicorn.sock myproject.wsgi:application
+
+[Install]
+WantedBy=multi-user.target</pre>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">28. Enable and Start Gunicorn</div>
+    <span id="cmd28" class="command">sudo systemctl start gunicorn && sudo systemctl enable gunicorn && sudo systemctl status gunicorn</span>
+    <button class="copy-btn" onclick="copyCommand('cmd28')">Copy</button>
+    <div id="msg28" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- Nginx Setup -->
+  <div class="command-box">
+    <div class="command-number">29. Install and Configure Nginx</div>
+    <span id="cmd29" class="command">sudo apt install nginx -y</span>
+    <button class="copy-btn" onclick="copyCommand('cmd29')">Copy</button>
+    <div id="msg29" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">30. Create Nginx Config</div>
+    <span id="cmd30" class="command">sudo nano /etc/nginx/sites-available/myproject</span>
+    <button class="copy-btn" onclick="copyCommand('cmd30')">Copy</button>
+    <div id="msg30" class="copied-message">Copied!</div>
+    <pre class="command">server {
+    listen 80;
+    server_name example.com www.example.com;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/ubuntu/myproject;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/myproject/gunicorn.sock;
+    }
+}</pre>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">31. Enable Nginx Site</div>
+    <span id="cmd31" class="command">sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled && sudo nginx -t && sudo systemctl restart nginx</span>
+    <button class="copy-btn" onclick="copyCommand('cmd31')">Copy</button>
+    <div id="msg31" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">32. Allow Nginx Through Firewall</div>
+    <span id="cmd32" class="command">sudo ufw allow 'Nginx Full' && sudo ufw enable && sudo ufw status</span>
+    <button class="copy-btn" onclick="copyCommand('cmd32')">Copy</button>
+    <div id="msg32" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- Cloudflare Tunnel -->
+  <div class="command-box">
+    <div class="command-number">33. Install Cloudflare Tunnel (cloudflared)</div>
+    <span id="cmd33" class="command">sudo apt install cloudflared -y</span>
+    <button class="copy-btn" onclick="copyCommand('cmd33')">Copy</button>
+    <div id="msg33" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">34. Login Cloudflare Tunnel</div>
+    <span id="cmd34" class="command">cloudflared tunnel login</span>
+    <button class="copy-btn" onclick="copyCommand('cmd34')">Copy</button>
+    <div id="msg34" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">35. Create Tunnel and Run</div>
+    <span id="cmd35" class="command">cloudflared tunnel create mytunnel</span>
+    <button class="copy-btn" onclick="copyCommand('cmd35')">Copy</button>
+    <div id="msg35" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">36. Configure Tunnel to Django Server</div>
+    <pre id="cmd36" class="command">sudo nano ~/.cloudflared/config.yml</pre>
+    <button class="copy-btn" onclick="copyCommand('cmd36')">Copy</button>
+    <div id="msg36" class="copied-message">Copied!</div>
+    <pre class="command">tunnel: mytunnel
+credentials-file: /home/ubuntu/.cloudflared/mytunnel.json
+
+ingress:
+  - hostname: yourdomain.com
+    service: http://localhost:8000
+  - service: http_status:404</pre>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">37. Run Cloudflare Tunnel</div>
+    <span id="cmd37" class="command">cloudflared tunnel run mytunnel</span>
+    <button class="copy-btn" onclick="copyCommand('cmd37')">Copy</button>
+    <div id="msg37" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">38. Run on Background (Service)</div>
+    <span id="cmd38" class="command">sudo systemctl enable cloudflared && sudo systemctl start cloudflared</span>
+    <button class="copy-btn" onclick="copyCommand('cmd38')">Copy</button>
+    <div id="msg38" class="copied-message">Copied!</div>
+  </div>
+
+  <!-- Final -->
+  <div class="command-box">
+    <div class="command-number">39. Check Everything</div>
+    <span id="cmd39" class="command">sudo systemctl status gunicorn nginx cloudflared</span>
+    <button class="copy-btn" onclick="copyCommand('cmd39')">Copy</button>
+    <div id="msg39" class="copied-message">Copied!</div>
+  </div>
+
+  <div class="command-box">
+    <div class="command-number">40. Collect Static Files for Deployment</div>
+    <span id="cmd40" class="command">python3 manage.py collectstatic</span>
+    <button class="copy-btn" onclick="copyCommand('cmd40')">Copy</button>
+    <div id="msg40" class="copied-message">Copied!</div>
+  </div>
+
+  <script>
+    function copyCommand(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const msg = document.getElementById('msg' + id.slice(3));
+        msg.style.display = "block";
+        setTimeout(() => {
+          msg.style.display = "none";
+        }, 1500);
+      });
+    }
+  </script>
+
+</body>
+</html>

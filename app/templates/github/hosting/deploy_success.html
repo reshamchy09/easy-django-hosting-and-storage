@@ -1,0 +1,9 @@
+{% extends "dashboard_base.html" %}
+{% block content %}
+  <h2>Deployment started</h2>
+  <p>Project <strong>{{ project.name }}</strong> is started on port <strong>{{ project.port }}</strong>.</p>
+  <p>Repo: <a href="{{ project.repo_url }}" target="_blank">{{ project.repo_url }}</a></p>
+  <p>Created at: {{ project.created_at }}</p>
+  <a href="{% url 'github_success' pk=project.pk %}">View this deployment</a>
+
+{% endblock %}

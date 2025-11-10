@@ -137,3 +137,12 @@ class PaymentRequestAdmin(admin.ModelAdmin):
     def reject_payments(self, request, queryset):
         updated = queryset.update(status='rejected')
         self.message_user(request, f"{updated} payment(s) rejected.")
+
+
+
+##########################Github Integration###########################
+from .models import DeployedProject
+@admin.register(DeployedProject)
+class DeployedProjectAdmin(admin.ModelAdmin):
+    list_display = ("name", "port", "repo_url", "running", "created_at")
+    readonly_fields = ("created_at",)

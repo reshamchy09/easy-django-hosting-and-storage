@@ -25,13 +25,18 @@ urlpatterns = [
     path('dashboard/django/<int:project_id>/delete/', views.delete_django_project, name='delete_django_project'),
     path('dashboard/django/<int:project_id>/restart/', views.restart_django_project, name='restart_django_project'),
     path('dashboard/django/<int:project_id>/logs/', views.django_project_logs, name='django_project_logs'),
+
+    # Github Integration
+    path("github/", views.github_view, name="github_deploy"),
+    path("success/<int:pk>/", views.github_success, name="github_success"),
+    path("hosted-projects/", views.hosted_projects, name="hosted_projects"),
     
     
-     # Custom Domain Management (NEW)
+    # Custom Domain Management (NEW)
     path('django-project/<int:project_id>/update-domain/', views.update_custom_domain, name='update_custom_domain'),
     path('django-project/<int:project_id>/remove-domain/', views.remove_custom_domain, name='remove_custom_domain'),
 
-      # New enhanced Django project features
+    # New enhanced Django project features
     path('dashboard/django/<int:project_id>/toggle-status/', views.toggle_django_project_status, name='toggle_django_project_status'),
     path('dashboard/django/<int:project_id>/update/', views.update_django_project, name='update_django_project'),
     path('dashboard/django/<int:project_id>/metrics/', views.django_project_metrics, name='django_project_metrics'),
@@ -44,12 +49,13 @@ urlpatterns = [
 
 
     # Storage Management
-      path('upload/', views.upload_file, name='upload_file'),
+    path('upload/', views.upload_file, name='upload_file'),
     path('my-uploads/', views.upload_list, name='upload_list'),
-     path('payment/', views.payment_page, name='payment_page'),
-      path('storage-overview/', views.storage_overview, name='storage_overview'),
+    path('payment/', views.payment_page, name='payment_page'),
+    path('storage-overview/', views.storage_overview, name='storage_overview'),
 
-        path('help/', views. help_view, name='help'),
+
+    path('help/', views. help_view, name='help'),
       
 ]
 

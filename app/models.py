@@ -344,3 +344,22 @@ class SSLCertificate(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+############Github Integration Models##############
+
+class DeployedProject(models.Model):
+    name = models.CharField(max_length=255)
+    repo_url = models.URLField()
+    port = models.PositiveIntegerField(unique=True)
+    running = models.BooleanField(default=False)
+    pid = models.PositiveIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def host_url(self):
+        # Replace '127.0.0.1' with your server IP or domain
+        return f"http://127.0.0.1:{self.port}"
+
+    def __str__(self):
+        return self.name

@@ -307,6 +307,10 @@
                         <span class="nav-item-icon">⚡</span>
                         Deploy Django
                     </a>
+                    <a href="{% url 'github_deploy' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_django' %}active{% endif %}">
+                        <span class="nav-item-icon">💻</span>
+                        Deploy Github
+                    </a>
                     <a href="{% url 'deploy_static' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_static' %}active{% endif %}">
                         <span class="nav-item-icon">🌐</span>
                         Deploy Static

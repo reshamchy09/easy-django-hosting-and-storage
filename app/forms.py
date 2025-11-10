@@ -455,3 +455,9 @@ class PaymentRequestForm(forms.ModelForm):
 
     def clean_gb_requested(self):
         return float(self.cleaned_data['gb_requested'])
+
+
+#########################Github Deployment######################
+class DeployForm(forms.Form):
+    repo_url = forms.URLField(label="GitHub repo URL", widget=forms.URLInput(attrs={"placeholder":"https://github.com/user/repo.git"}))
+    port = forms.IntegerField(label="Port to run (e.g. 8001)", min_value=1024, max_value=65535, initial=8001)

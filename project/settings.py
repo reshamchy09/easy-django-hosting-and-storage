@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-6hknkukot4k+b@eub3j-nx(73t!#wxiw48=x*$qt+s9w2i)#f=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['samitchaudhary.com.np', 'www.samitchaudhary.com.np', 'localhost','*']
+ALLOWED_HOSTS = ['samitchaudhary.com.np', 'www.samitchaudhary.com.np', 'localhost','127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://samitchaudhary.com.np',

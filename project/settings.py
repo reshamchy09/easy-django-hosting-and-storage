@@ -137,6 +137,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 USER_PROJECTS_DIR = Path(os.getenv("USER_PROJECTS_DIR", BASE_DIR / "user_projects"))
 USER_PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
 
+USER_PROJECTS_DIR = Path(BASE_DIR) / 'deployed_projects'
+USER_PROJECTS_DIR.mkdir(exist_ok=True)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -179,3 +182,4 @@ LOGGING = {
         },
     },
 }
+

@@ -347,19 +347,64 @@ class SSLCertificate(models.Model):
 
 
 ############Github Integration Models##############
+from django.db import models
+from django.conf import settings
+
+MAIN_DOMAIN = getattr(settings, 'MAIN_DOMAIN', 'samitchaudhary.com.np')
+
 
 class DeployedProject(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     repo_url = models.URLField()
     port = models.PositiveIntegerField(unique=True)
     running = models.BooleanField(default=False)
     pid = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['port']),
+            models.Index(fields=['pid']),
+            models.Index(fields=['name']),
+        ]
+
+    def get_subdomain_url(self):
+        """
+        Get the subdomain URL for this project.
+        Example: myproject.samitchaudhary.com.np
+        """
+        return f"http://{self.name}.{MAIN_DOMAIN}"
+    
+    def get_subdomain_url_secure(self):
+        """
+        Get the HTTPS subdomain URL for this project.
+        Example: https://myproject.samitchaudhary.com.np
+        """
+        return f"https://{self.name}.{MAIN_DOMAIN}"
+
+    def get_host_url(self, request=None):
+        """
+        Generate the URL to access this deployed project.
+        Returns subdomain URL by default.
+        """
+        # Check if HTTPS is configured
+        use_https = getattr(settings, 'USE_HTTPS', False)
+        
+        if use_https:
+            return self.get_subdomain_url_secure()
+        return self.get_subdomain_url()
 
     @property
     def host_url(self):
-        # Replace '127.0.0.1' with your server IP or domain
-        return f"http://127.0.0.1:{self.port}"
+        """Property for template access without request"""
+        return self.get_host_url()
+    
+    @property
+    def subdomain(self):
+        """Get just the subdomain part"""
+        return f"{self.name}.{MAIN_DOMAIN}"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.subdomain})"

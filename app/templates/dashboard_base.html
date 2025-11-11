@@ -307,7 +307,7 @@
                         <span class="nav-item-icon">⚡</span>
                         Deploy Django
                     </a>
-                    <a href="{% url 'github_deploy' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_django' %}active{% endif %}">
+                    <a href="{% url 'github_view' %}" class="nav-item {% if request.resolver_match.url_name == 'deploy_django' %}active{% endif %}">
                         <span class="nav-item-icon">💻</span>
                         Deploy Github
                     </a>
@@ -322,6 +322,10 @@
                     <a href="{% url 'django_projects' %}" class="nav-item {% if request.resolver_match.url_name == 'django_projects' or request.resolver_match.url_name == 'django_project_detail' %}active{% endif %}">
                         <span class="nav-item-icon">📱</span>
                         Django Apps
+                    </a>
+                    <a href="{% url 'hosted_projects' %}" class="nav-item {% if request.resolver_match.url_name == 'websites' %}active{% endif %}">
+                        <span class="nav-item-icon">🌐</span>
+                        Github Sites
                     </a>
                     <a href="{% url 'websites' %}" class="nav-item {% if request.resolver_match.url_name == 'websites' %}active{% endif %}">
                         <span class="nav-item-icon">🌟</span>

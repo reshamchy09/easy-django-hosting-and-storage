@@ -27,9 +27,10 @@ urlpatterns = [
     path('dashboard/django/<int:project_id>/logs/', views.django_project_logs, name='django_project_logs'),
 
     # Github Integration
-    path("github/", views.github_view, name="github_deploy"),
-    path("success/<int:pk>/", views.github_success, name="github_success"),
-    path("hosted-projects/", views.hosted_projects, name="hosted_projects"),
+   path('deploy/', views.github_view, name='github_view'),
+    path('deploy/success/<int:pk>/', views.github_success, name='github_success'),
+    path('projects/', views.hosted_projects, name='hosted_projects'),
+    path('projects/<int:pk>/stop/', views.stop_project, name='stop_project'),
     
     
     # Custom Domain Management (NEW)

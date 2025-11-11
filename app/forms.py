@@ -458,6 +458,55 @@ class PaymentRequestForm(forms.ModelForm):
 
 
 #########################Github Deployment######################
+from django import forms
+from django.core.validators import URLValidator
+import re
+
+
 class DeployForm(forms.Form):
-    repo_url = forms.URLField(label="GitHub repo URL", widget=forms.URLInput(attrs={"placeholder":"https://github.com/user/repo.git"}))
-    port = forms.IntegerField(label="Port to run (e.g. 8001)", min_value=1024, max_value=65535, initial=8001)
+    repo_url = forms.URLField(
+        label="GitHub Repository URL",
+        max_length=500,
+        widget=forms.URLInput(attrs={
+            'placeholder': 'https://github.com/username/repository',
+            'class': 'form-control'
+        }),
+        help_text="Enter a valid GitHub HTTPS URL (e.g., https://github.com/user/repo). "
+                  "The project will be deployed at projectname.samitchaudhary.com.np"
+    )
+
+    def clean_repo_url(self):
+        """Validate that URL is a valid GitHub repository"""
+        url = self.cleaned_data['repo_url'].strip()
+        
+        # Must be HTTPS GitHub URL
+        github_pattern = r'^https://github\.com/[\w-]+/[\w.-]+(?:\.git)?$'
+        if not re.match(github_pattern, url):
+            raise forms.ValidationError(
+                "Invalid GitHub URL. Must be in format: https://github.com/username/repository"
+            )
+        
+        # Extract project name and validate it's suitable for subdomain
+        project_name = url.rstrip("/").split("/")[-1].replace(".git", "")
+        
+        # Subdomain validation - must be DNS-safe
+        subdomain_pattern = r'^[a-zA-Z][a-zA-Z0-9-]{0,50}$'
+        if not re.match(subdomain_pattern, project_name):
+            raise forms.ValidationError(
+                f"Project name '{project_name}' is not suitable for subdomain. "
+                "Must start with a letter and contain only letters, numbers, and hyphens."
+            )
+        
+        # Check for reserved subdomains
+        reserved_subdomains = [
+            'www', 'mail', 'ftp', 'smtp', 'pop', 'imap',
+            'admin', 'api', 'app', 'blog', 'dev', 'test',
+            'staging', 'production', 'cdn', 'static', 'assets'
+        ]
+        
+        if project_name.lower() in reserved_subdomains:
+            raise forms.ValidationError(
+                f"Project name '{project_name}' is reserved. Please choose a different repository name."
+            )
+        
+        return url

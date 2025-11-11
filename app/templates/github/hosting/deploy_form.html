@@ -1,52 +1,103 @@
 {% extends "dashboard_base.html" %}
 
 {% block content %}
+<div class="container mt-4">
   {% if user.is_authenticated %}
-    <h2>Deploy a GitHub repo</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Deploy</button>
-    </form>
-    <hr>
-  {% else %}
-    <p>You must <a href="{% url 'login' %}">log in</a> to deploy a repository.</p>
-  {% endif %}
-
-  {% if projects %}
-  <table border="1" cellpadding="5">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Repo</th>
-        <th>Port</th>
-        <th>Status</th>
-        <th>Visit</th>
-        <th>Created At</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for project in projects %}
-      <tr>
-        <td>{{ project.name }}</td>
-        <td><a href="{{ project.repo_url }}" target="_blank">{{ project.repo_url }}</a></td>
-        <td>{{ project.port }}</td>
-        <td>{% if project.running %}Running{% else %}Stopped{% endif %}</td>
-        <td>
-          {% if project.running %}
-            <a href="{{ project.host_url }}" target="_blank">Visit</a>
-
-          {% else %}
-            N/A
-          {% endif %}
-        </td>
-        <td>{{ project.created_at|date:"Y-m-d H:i" }}</td>
-      </tr>
+    <h2>Deploy a GitHub Repository</h2>
+    
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
       {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <p>No projects hosted yet.</p>
-{% endif %}
+    {% endif %}
 
+    <div class="card mb-4">
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Deploy Project</button>
+          <a href="{% url 'hosted_projects' %}" class="btn btn-secondary">View All Projects</a>
+        </form>
+      </div>
+    </div>
+
+    <hr>
+
+    <h3>Recently Deployed Projects</h3>
+    {% if projects %}
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>Name</th>
+              <th>Repository</th>
+              <th>Port</th>
+              <th>Status</th>
+              <th>Actions</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for project in projects %}
+            <tr>
+              <td><strong>{{ project.name }}</strong></td>
+              <td>
+                <a href="{{ project.repo_url }}" target="_blank" rel="noopener">
+                  {{ project.repo_url|truncatechars:50 }}
+                </a>
+              </td>
+              <td>{{ project.port }}</td>
+              <td>
+                {% if project.running %}
+                  <span class="badge bg-success">Running</span>
+                {% else %}
+                  <span class="badge bg-secondary">Stopped</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if project.running %}
+                  <a href="{{ project.get_host_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-info">
+                    Visit Site
+                  </a>
+                  <form method="post" action="{% url 'stop_project' pk=project.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Stop this project?')">
+                      Stop
+                    </button>
+                  </form>
+                {% else %}
+                  <span class="text-muted">Not Available</span>
+                {% endif %}
+              </td>
+              <td>{{ project.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="alert alert-info">
+        <p>No projects deployed yet. Deploy your first GitHub repository above!</p>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div class="alert alert-warning">
+      <p>You must <a href="{% url 'login' %}">log in</a> to deploy repositories.</p>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .table-responsive {
+    margin-top: 20px;
+  }
+  .card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+</style>
 {% endblock %}

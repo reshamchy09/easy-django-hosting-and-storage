@@ -104,7 +104,7 @@ def deploy_django_view(request):
         
         if form.is_valid():
             try:
-                # Save the form instance first to get the file
+                # Don't save yet - we need to set subdomain first
                 django_project = form.save(commit=False)
                 django_project.user = request.user
 
@@ -126,26 +126,46 @@ def deploy_django_view(request):
                 # Generate subdomain format with uniqueness check
                 BASE_DOMAIN = "samitchaudhary.com.np"
                 subdomain_base = safe_name.lower().replace('_', '-')
+                
+                # Start with base subdomain
                 subdomain = f"{subdomain_base}.{BASE_DOMAIN}"
                 
                 # Check if subdomain exists and make it unique
+                # IMPORTANT: Check BEFORE assigning to django_project
                 counter = 1
                 while DjangoProject.objects.filter(subdomain=subdomain).exists():
+                    logger.info(f"Subdomain {subdomain} already exists, trying variation...")
                     subdomain = f"{subdomain_base}-{counter}.{BASE_DOMAIN}"
                     counter += 1
-                    if counter > 100:  # Safety limit
-                        subdomain = f"{subdomain_base}-{uuid.uuid4().hex[:6]}.{BASE_DOMAIN}"
+                    
+                    # Safety limit to prevent infinite loops
+                    if counter > 100:
+                        # Use UUID for guaranteed uniqueness
+                        unique_id = uuid.uuid4().hex[:8]
+                        subdomain = f"{subdomain_base}-{unique_id}.{BASE_DOMAIN}"
+                        logger.warning(f"Hit counter limit, using UUID: {subdomain}")
                         break
                 
-                # Set the unique subdomain field
+                # NOW set the unique subdomain field
                 django_project.subdomain = subdomain
                 logger.info(f"Generated unique subdomain: {subdomain}")
 
-                # Save the project to get the file path
-                django_project.save()
-                
-                logger.info(f"Django project saved with ID: {django_project.id}")
-                logger.info(f"Project file path: {django_project.project_file.path}")
+                # Now it's safe to save the project
+                try:
+                    django_project.save()
+                    logger.info(f"Django project saved with ID: {django_project.id}")
+                    logger.info(f"Project file path: {django_project.project_file.path}")
+                except Exception as save_error:
+                    # This should not happen now, but handle it just in case
+                    if "UNIQUE constraint failed" in str(save_error):
+                        logger.error(f"Subdomain uniqueness error: {save_error}")
+                        # Try one more time with UUID
+                        unique_id = uuid.uuid4().hex[:8]
+                        django_project.subdomain = f"{subdomain_base}-{unique_id}.{BASE_DOMAIN}"
+                        django_project.save()
+                        logger.info(f"Saved with UUID subdomain: {django_project.subdomain}")
+                    else:
+                        raise
 
                 # Set project folder path with validation
                 WEBSITES_ROOT = getattr(settings, 'WEBSITES_ROOT', 
@@ -241,7 +261,12 @@ def deploy_django_view(request):
 
             except Exception as e:
                 logger.error(f"Django deployment preparation error for user {request.user.username}: {str(e)}")
-                messages.error(request, f"Deployment preparation failed: {str(e)}")
+                
+                # Handle UNIQUE constraint error specifically
+                if "UNIQUE constraint failed" in str(e) and "subdomain" in str(e):
+                    messages.error(request, "A project with this subdomain already exists. Please try a different project name or try again.")
+                else:
+                    messages.error(request, f"Deployment preparation failed: {str(e)}")
         else:
             # Form validation errors
             logger.error(f"Form validation errors: {form.errors}")
@@ -1424,98 +1449,488 @@ def help_view(request):
 ################Github Deployment Metrics##########################################
 import sys
 import subprocess
-import shlex
+import re
+import psutil
+from pathlib import Path
 
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.conf import settings
+from django.db import transaction
 from git import Repo, GitCommandError
+
 from .forms import DeployForm
 from .models import DeployedProject
 
-PYTHON = sys.executable  # ensures using same python
+PYTHON = sys.executable
+MAIN_DOMAIN = getattr(settings, 'MAIN_DOMAIN', 'samitchaudhary.com.np')
+
+
+def validate_repo_url(url):
+    """Validate GitHub repository URL"""
+    pattern = r'^https://github\.com/[\w-]+/[\w.-]+(?:\.git)?$'
+    return bool(re.match(pattern, url))
+
+
+def validate_project_name(name):
+    """Ensure project name is safe for filesystem and Python imports"""
+    pattern = r'^[a-zA-Z][a-zA-Z0-9_-]{0,50}$'
+    return bool(re.match(pattern, name))
+
+
+def is_port_available(port):
+    """Check if port is actually available on the system"""
+    import socket
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(('0.0.0.0', port))
+            return True
+    except OSError:
+        return False
+
+
+def get_available_port(start_port=8000, end_port=9000):
+    """Find an available port in the specified range"""
+    for port in range(start_port, end_port):
+        if is_port_available(port) and not DeployedProject.objects.filter(port=port).exists():
+            return port
+    return None
+
+
+def kill_process_on_port(port):
+    """Kill any process using the specified port"""
+    for proc in psutil.process_iter(['pid', 'name', 'connections']):
+        try:
+            for conn in proc.connections():
+                if conn.laddr.port == port:
+                    proc.kill()
+                    return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return False
+
+
+def setup_nginx_subdomain(project_name, port):
+    """
+    Create Nginx configuration for subdomain routing.
+    This function should be called after deployment.
+    
+    Returns: (success: bool, message: str)
+    """
+    nginx_config = f"""
+server {{
+    listen 80;
+    server_name {project_name}.{MAIN_DOMAIN};
+
+    location / {{
+        proxy_pass http://127.0.0.1:{port};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }}
+
+    # Static files
+    location /static/ {{
+        alias /var/www/{project_name}/static/;
+        expires 30d;
+    }}
+
+    # Media files
+    location /media/ {{
+        alias /var/www/{project_name}/media/;
+        expires 30d;
+    }}
+}}
+"""
+    
+    nginx_conf_path = Path(f"/etc/nginx/sites-available/{project_name}.{MAIN_DOMAIN}")
+    nginx_enabled_path = Path(f"/etc/nginx/sites-enabled/{project_name}.{MAIN_DOMAIN}")
+    
+    try:
+        # Write Nginx config
+        with open(nginx_conf_path, 'w') as f:
+            f.write(nginx_config)
+        
+        # Create symbolic link to sites-enabled
+        if not nginx_enabled_path.exists():
+            nginx_enabled_path.symlink_to(nginx_conf_path)
+        
+        # Test Nginx configuration
+        result = subprocess.run(
+            ['nginx', '-t'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        
+        if result.returncode != 0:
+            return False, f"Nginx config test failed: {result.stderr}"
+        
+        # Reload Nginx
+        subprocess.run(['systemctl', 'reload', 'nginx'], check=True, timeout=10)
+        
+        return True, "Nginx configuration created successfully"
+        
+    except PermissionError:
+        return False, "Permission denied. Run with sudo or adjust permissions."
+    except FileNotFoundError as e:
+        return False, f"Nginx not found or path doesn't exist: {e}"
+    except subprocess.TimeoutExpired:
+        return False, "Nginx reload timed out"
+    except Exception as e:
+        return False, f"Failed to setup Nginx: {str(e)}"
+
+
+def remove_nginx_subdomain(project_name):
+    """Remove Nginx configuration for a subdomain"""
+    nginx_conf_path = Path(f"/etc/nginx/sites-available/{project_name}.{MAIN_DOMAIN}")
+    nginx_enabled_path = Path(f"/etc/nginx/sites-enabled/{project_name}.{MAIN_DOMAIN}")
+    
+    try:
+        if nginx_enabled_path.exists():
+            nginx_enabled_path.unlink()
+        if nginx_conf_path.exists():
+            nginx_conf_path.unlink()
+        
+        subprocess.run(['systemctl', 'reload', 'nginx'], check=True, timeout=10)
+        return True, "Nginx configuration removed"
+    except Exception as e:
+        return False, f"Failed to remove Nginx config: {str(e)}"
 
 
 def github_view(request):
     """
-    Simple deploy: clone/pull repo, install requirements (if exists),
-    run migrations and collectstatic (if Django project),
-    and start gunicorn on the requested port.
-
-    WARNING: This is a demo. Input is minimally validated.
+    Deploy a GitHub repository with subdomain support.
+    
+    Security measures:
+    - Validates repository URL format
+    - Sanitizes project names
+    - Auto-assigns available ports
+    - Tracks process IDs
+    - Validates all subprocess inputs
+    - Creates Nginx subdomain configuration
     """
     if request.method == "POST":
         form = DeployForm(request.POST)
         if form.is_valid():
             repo_url = form.cleaned_data["repo_url"].strip()
-            port = form.cleaned_data["port"]
 
-            # derive project name
-            project_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
-            project_dir = settings.USER_PROJECTS_DIR / project_name
-
-            try:
-                if not project_dir.exists():
-                    # Clone repo
-                    Repo.clone_from(repo_url, project_dir)
-                    cloned = True
-                else:
-                    repo = Repo(str(project_dir))
-                    repo.remotes.origin.pull()
-                    cloned = False
-            except GitCommandError as e:
-                messages.error(request, f"Git error: {e}")
-                return render(request, "hosting/deploy_form.html", {"form": form})
-
-            # install requirements if requirements.txt exists
-            req_file = project_dir / "requirements.txt"
-            if req_file.exists():
-                try:
-                    # pip install -r requirements.txt
-                    cmd = [PYTHON, "-m", "pip", "install", "-r", str(req_file)]
-                    subprocess.run(cmd, check=True)
-                except subprocess.CalledProcessError as e:
-                    messages.warning(request, f"pip install failed: {e}")
-            
-            # If manage.py exists, attempt migrate and collectstatic
-            manage_py = project_dir / "manage.py"
-            if manage_py.exists():
-                try:
-                    subprocess.run([PYTHON, str(manage_py), "migrate", "--noinput"], cwd=str(project_dir), check=True)
-                    subprocess.run([PYTHON, str(manage_py), "collectstatic", "--noinput"], cwd=str(project_dir), check=True)
-                except subprocess.CalledProcessError as e:
-                    messages.warning(request, f"manage.py commands had issues: {e}")
-
-            # start gunicorn process binding to 0.0.0.0:port
-            # Note: for production use systemd / process manager is recommended
-            wsgi_module = f"{project_name}.wsgi:application"
-            gunicorn_cmd = [PYTHON, "-m", "gunicorn", "--bind", f"0.0.0.0:{port}", wsgi_module]
-
-            # ensure not starting duplicate process for same port (very simple check)
-            existing = DeployedProject.objects.filter(port=port)
-            if existing.exists():
-                messages.error(request, f"Port {port} already in use by another deployed project.")
+            # Security: Validate repository URL
+            if not validate_repo_url(repo_url):
+                messages.error(request, "Invalid repository URL. Only GitHub HTTPS URLs are allowed.")
                 return render(request, "github/hosting/deploy_form.html", {"form": form})
 
-            try:
-                # spawn process (detached)
-                # Use subprocess.Popen so Django doesn't wait
-                process = subprocess.Popen(gunicorn_cmd, cwd=str(project_dir), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Derive and validate project name
+            project_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
+            
+            if not validate_project_name(project_name):
+                messages.error(request, f"Invalid project name: {project_name}. Must be alphanumeric.")
+                return render(request, "github/hosting/deploy_form.html", {"form": form})
 
-                # record in DB
-                dp = DeployedProject.objects.create(name=project_name, repo_url=repo_url, port=port, running=True)
-                messages.success(request, f"Deployed {project_name} on port {port}. (PID={process.pid})")
-                return redirect("deploy_success", pk=dp.pk)
-            except Exception as e:
-                messages.error(request, f"Failed to start gunicorn: {e}")
+            # Check if project name already exists
+            if DeployedProject.objects.filter(name=project_name).exists():
+                messages.error(request, f"Project '{project_name}' already exists. Please choose a different repository.")
+                return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+            project_dir = Path(settings.USER_PROJECTS_DIR) / project_name
+
+            # Auto-assign available port
+            with transaction.atomic():
+                port = get_available_port()
+                if not port:
+                    messages.error(request, "No available ports. Please contact administrator.")
+                    return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+                # Clone or pull repository
+                try:
+                    if not project_dir.exists():
+                        Repo.clone_from(repo_url, str(project_dir), depth=1)
+                        cloned = True
+                    else:
+                        repo = Repo(str(project_dir))
+                        repo.remotes.origin.pull()
+                        cloned = False
+                except GitCommandError as e:
+                    messages.error(request, f"Git error: {e}")
+                    return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+                # Ensure waitress is installed
+                try:
+                    subprocess.run(
+                        [PYTHON, "-m", "pip", "install", "waitress"], 
+                        check=True, 
+                        timeout=60,
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.PIPE
+                    )
+                except subprocess.CalledProcessError:
+                    messages.warning(request, "Failed to install waitress")
+
+                # Install requirements if exists
+                req_file = project_dir / "requirements.txt"
+                if req_file.exists():
+                    try:
+                        cmd = [PYTHON, "-m", "pip", "install", "-r", str(req_file.absolute())]
+                        subprocess.run(cmd, check=True, timeout=300, 
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    except subprocess.TimeoutExpired:
+                        messages.warning(request, "pip install timed out after 5 minutes.")
+                    except subprocess.CalledProcessError as e:
+                        messages.warning(request, f"pip install failed: {e.stderr.decode()[:200]}")
+
+                # Security: Validate WSGI module path
+                safe_project_name = re.sub(r'[^a-zA-Z0-9_]', '_', project_name)
+                
+                # Find the actual Django project directory
+                settings_file = None
+                django_project_dir = None
+                
+                possible_paths = [
+                    project_dir / safe_project_name / "settings.py",
+                    project_dir / project_name / "settings.py",
+                ]
+                
+                for path in project_dir.rglob('settings.py'):
+                    if 'site-packages' not in str(path) and 'venv' not in str(path):
+                        settings_file = path
+                        django_project_dir = path.parent.parent
+                        break
+                
+                for path in possible_paths:
+                    if path.exists():
+                        settings_file = path
+                        django_project_dir = path.parent.parent
+                        break
+
+                if not settings_file:
+                    messages.error(request, f"Could not find Django settings.py in {project_name}")
+                    return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+                settings_parent = settings_file.parent.name
+                settings_module = f"{settings_parent}.settings"
+
+                wsgi_file = settings_file.parent / "wsgi.py"
+                if not wsgi_file.exists():
+                    messages.error(request, f"WSGI file not found. Expected at: {wsgi_file}")
+                    return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+                wsgi_module = f"{settings_parent}.wsgi:application"
+
+                # Run Django management commands
+                manage_py = django_project_dir / "manage.py"
+                if not manage_py.exists():
+                    manage_py = project_dir / "manage.py"
+                
+                if manage_py.exists():
+                    django_env = {
+                        **subprocess.os.environ.copy(),
+                        'DJANGO_SETTINGS_MODULE': settings_module,
+                        'PYTHONPATH': str(django_project_dir.absolute()),
+                    }
+                    
+                    try:
+                        subprocess.run(
+                            [PYTHON, str(manage_py.absolute()), "migrate", "--noinput"],
+                            cwd=str(django_project_dir), 
+                            env=django_env,
+                            check=True, 
+                            timeout=120,
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE
+                        )
+                        subprocess.run(
+                            [PYTHON, str(manage_py.absolute()), "collectstatic", "--noinput"],
+                            cwd=str(django_project_dir), 
+                            env=django_env,
+                            check=True, 
+                            timeout=120,
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE
+                        )
+                    except subprocess.TimeoutExpired:
+                        messages.warning(request, "Django management commands timed out.")
+                    except subprocess.CalledProcessError as e:
+                        error_output = e.stderr.decode('utf-8', errors='ignore')[:200] if e.stderr else str(e)
+                        messages.warning(request, f"Django commands had issues: {error_output}")
+
+                # Test WSGI module
+                test_cmd = [
+                    PYTHON, "-c", 
+                    f"import sys; sys.path.insert(0, '{django_project_dir}'); "
+                    f"import os; os.environ['DJANGO_SETTINGS_MODULE']='{settings_module}'; "
+                    f"from {settings_parent}.wsgi import application; print('WSGI OK')"
+                ]
+
+                try:
+                    result = subprocess.run(
+                        test_cmd, 
+                        cwd=str(django_project_dir), 
+                        check=True, 
+                        timeout=10,
+                        capture_output=True,
+                        text=True
+                    )
+                except subprocess.CalledProcessError as e:
+                    messages.error(
+                        request, 
+                        f"WSGI module test failed: {e.stderr[:800] if e.stderr else str(e)}"
+                    )
+                    return render(request, "github/hosting/deploy_form.html", {"form": form})
+
+                # Set up environment for waitress
+                env = {
+                    **subprocess.os.environ.copy(),
+                    'DJANGO_SETTINGS_MODULE': settings_module,
+                    'PYTHONPATH': str(django_project_dir.absolute()),
+                    'PYTHONUNBUFFERED': '1',
+                }
+
+                # Start waitress-serve process
+                waitress_cmd = [
+                    PYTHON, "-m", "waitress",
+                    "--host", "127.0.0.1",  # Only bind to localhost since Nginx will proxy
+                    "--port", str(port),
+                    "--threads", "4",
+                    f"{settings_parent}.wsgi:application"
+                ]
+
+                try:
+                    process = subprocess.Popen(
+                        waitress_cmd,
+                        cwd=str(django_project_dir),
+                        env=env,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        start_new_session=True
+                    )
+
+                    # Wait briefly to check if process started successfully
+                    try:
+                        returncode = process.wait(timeout=3)
+                        try:
+                            stdout, stderr = process.communicate(timeout=1)
+                            error_msg = stderr.decode('utf-8', errors='ignore')
+                        except:
+                            error_msg = "Unknown error"
+                        
+                        if len(error_msg) > 1500:
+                            error_msg = error_msg[:1500] + "..."
+                        
+                        messages.error(
+                            request, 
+                            f"Failed to start server (exit code {returncode}). Error: {error_msg}"
+                        )
+                        return render(request, "github/hosting/deploy_form.html", {"form": form})
+                    except subprocess.TimeoutExpired:
+                        pass
+
+                    # Record in database with PID
+                    dp = DeployedProject.objects.create(
+                        name=project_name,
+                        repo_url=repo_url,
+                        port=port,
+                        running=True,
+                        pid=process.pid
+                    )
+                    
+                    # Setup Nginx subdomain
+                    nginx_success, nginx_msg = setup_nginx_subdomain(project_name, port)
+                    if nginx_success:
+                        messages.success(
+                            request, 
+                            f"Successfully deployed {project_name} at {project_name}.{MAIN_DOMAIN} (Port: {port}, PID: {process.pid})"
+                        )
+                    else:
+                        messages.warning(
+                            request,
+                            f"Project deployed on port {port} but Nginx setup failed: {nginx_msg}. "
+                            f"You may need to configure Nginx manually for subdomain access."
+                        )
+                    
+                    return redirect("github_success", pk=dp.pk)
+
+                except FileNotFoundError:
+                    messages.error(request, "Waitress not installed. Install with: pip install waitress")
+                except Exception as e:
+                    messages.error(request, f"Failed to start server: {str(e)[:500]}")
+
     else:
         form = DeployForm()
-    return render(request, "github/hosting/deploy_form.html", {"form": form})
 
-from django.shortcuts import get_object_or_404
+    projects = DeployedProject.objects.order_by('-created_at')[:10]
+    return render(request, "github/hosting/deploy_form.html", {
+        "form": form,
+        "projects": projects,
+        "main_domain": MAIN_DOMAIN
+    })
+
 
 def github_success(request, pk):
+    """Display deployment success page"""
     dp = get_object_or_404(DeployedProject, pk=pk)
-    return render(request, "github/hosting/deploy_success.html", {"project": dp})
+    
+    if dp.pid:
+        try:
+            proc = psutil.Process(dp.pid)
+            dp.running = proc.is_running()
+        except psutil.NoSuchProcess:
+            dp.running = False
+        dp.save()
+    
+    return render(request, "github/hosting/deploy_success.html", {
+        "project": dp,
+        "main_domain": MAIN_DOMAIN
+    })
+
 
 def hosted_projects(request):
+    """List all hosted projects with live status"""
     projects = DeployedProject.objects.order_by('-created_at')
-    return render(request, "github/hosting/hosted_projects.html", {"projects": projects})
+    
+    for project in projects:
+        if project.pid:
+            try:
+                proc = psutil.Process(project.pid)
+                project.running = proc.is_running()
+            except psutil.NoSuchProcess:
+                project.running = False
+            project.save()
+    
+    return render(request, "github/hosting/hosted_projects.html", {
+        "projects": projects,
+        "main_domain": MAIN_DOMAIN
+    })
+
+
+def stop_project(request, pk):
+    """Stop a running project and remove Nginx configuration"""
+    if request.method == "POST":
+        project = get_object_or_404(DeployedProject, pk=pk)
+        
+        if project.pid:
+            try:
+                proc = psutil.Process(project.pid)
+                proc.terminate()
+                proc.wait(timeout=10)
+                project.running = False
+                project.save()
+                messages.success(request, f"Stopped {project.name}")
+            except psutil.NoSuchProcess:
+                project.running = False
+                project.save()
+                messages.warning(request, "Process was not running")
+            except psutil.TimeoutExpired:
+                proc.kill()
+                project.running = False
+                project.save()
+                messages.warning(request, "Process forcefully killed")
+        
+        # Remove Nginx configuration
+        nginx_success, nginx_msg = remove_nginx_subdomain(project.name)
+        if not nginx_success:
+            messages.warning(request, f"Nginx cleanup warning: {nginx_msg}")
+        
+        return redirect("hosted_projects")
+    
+    return redirect("hosted_projects")

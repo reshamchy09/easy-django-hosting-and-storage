@@ -1564,12 +1564,11 @@ def get_available_port(start_port=8000, end_port=9000):
 
 
 def setup_nginx_subdomain(project_name, port):
-    """Create Nginx configuration for subdomain routing"""
+    """Create Nginx configuration for subdomain routing using sudo"""
     if sys.platform == 'win32':
         return False, "Nginx configuration skipped (Windows environment)"
     
-    nginx_config = f"""
-server {{
+    nginx_config = f"""server {{
     listen 80;
     server_name {project_name}.{MAIN_DOMAIN};
 
@@ -1593,18 +1592,37 @@ server {{
 }}
 """
     
-    nginx_conf_path = Path(f"/etc/nginx/sites-available/{project_name}.{MAIN_DOMAIN}")
-    nginx_enabled_path = Path(f"/etc/nginx/sites-enabled/{project_name}.{MAIN_DOMAIN}")
-    
     try:
-        with open(nginx_conf_path, 'w') as f:
-            f.write(nginx_config)
+        # Write config to a temporary file first
+        temp_config = Path(f"/tmp/nginx_{project_name}.conf")
+        temp_config.write_text(nginx_config)
         
-        if not nginx_enabled_path.exists():
-            nginx_enabled_path.symlink_to(nginx_conf_path)
+        nginx_conf_path = f"/etc/nginx/sites-available/{project_name}.{MAIN_DOMAIN}"
+        nginx_enabled_path = f"/etc/nginx/sites-enabled/{project_name}.{MAIN_DOMAIN}"
         
+        # Use sudo to move the config file
         result = subprocess.run(
-            ['nginx', '-t'],
+            ['sudo', 'mv', str(temp_config), nginx_conf_path],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        if result.returncode != 0:
+            return False, f"Failed to create nginx config: {result.stderr}"
+        
+        # Create symbolic link with sudo
+        subprocess.run(
+            ['sudo', 'ln', '-sf', nginx_conf_path, nginx_enabled_path],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True
+        )
+        
+        # Test Nginx configuration
+        result = subprocess.run(
+            ['sudo', 'nginx', '-t'],
             capture_output=True,
             text=True,
             timeout=5
@@ -1613,17 +1631,26 @@ server {{
         if result.returncode != 0:
             return False, f"Nginx config test failed: {result.stderr}"
         
-        subprocess.run(['systemctl', 'reload', 'nginx'], check=True, timeout=10)
-        return True, "Nginx configuration created successfully"
+        # Reload Nginx
+        subprocess.run(
+            ['sudo', 'systemctl', 'reload', 'nginx'],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=True
+        )
         
-    except PermissionError:
-        return False, "Permission denied. Run with sudo or adjust permissions."
-    except FileNotFoundError as e:
-        return False, f"Nginx not found: {e}"
+        return True, f"Nginx configured successfully for {project_name}.{MAIN_DOMAIN}"
+        
+    except subprocess.CalledProcessError as e:
+        error_msg = e.stderr.decode() if hasattr(e.stderr, 'decode') else str(e)
+        return False, f"Command failed: {error_msg[:200]}"
     except subprocess.TimeoutExpired:
-        return False, "Nginx reload timed out"
+        return False, "Nginx command timed out"
+    except FileNotFoundError:
+        return False, "sudo command not found. Install sudo or run as root."
     except Exception as e:
-        return False, f"Failed to setup Nginx: {str(e)}"
+        return False, f"Failed to setup Nginx: {str(e)[:200]}"
 
 
 def remove_nginx_subdomain(project_name):

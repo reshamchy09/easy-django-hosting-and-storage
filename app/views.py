@@ -1479,11 +1479,20 @@ def clone_repository_background(repo_url, project_dir, project_id):
     """Clone repository in background thread"""
     try:
         if not project_dir.exists():
+            # Fresh clone
             project_dir.parent.mkdir(parents=True, exist_ok=True)
             Repo.clone_from(repo_url, str(project_dir), depth=1)
         else:
-            repo = Repo(str(project_dir))
-            repo.remotes.origin.pull()
+            # Check if it's a valid git repository
+            try:
+                repo = Repo(str(project_dir))
+                # Valid repo, pull latest changes
+                repo.remotes.origin.pull()
+            except Exception:
+                # Invalid or corrupted git repo, remove and re-clone
+                shutil.rmtree(project_dir)
+                project_dir.parent.mkdir(parents=True, exist_ok=True)
+                Repo.clone_from(repo_url, str(project_dir), depth=1)
         
         # Update project status
         project = DeployedProject.objects.get(id=project_id)
@@ -1654,23 +1663,43 @@ def setup_nginx_subdomain(project_name, port):
 
 
 def remove_nginx_subdomain(project_name):
-    """Remove Nginx configuration for a subdomain"""
+    """Remove Nginx configuration for a subdomain using sudo"""
     if sys.platform == 'win32':
         return True, "Nginx not configured (Windows)"
     
-    nginx_conf_path = Path(f"/etc/nginx/sites-available/{project_name}.{MAIN_DOMAIN}")
-    nginx_enabled_path = Path(f"/etc/nginx/sites-enabled/{project_name}.{MAIN_DOMAIN}")
+    nginx_conf_path = f"/etc/nginx/sites-available/{project_name}.{MAIN_DOMAIN}"
+    nginx_enabled_path = f"/etc/nginx/sites-enabled/{project_name}.{MAIN_DOMAIN}"
     
     try:
-        if nginx_enabled_path.exists():
-            nginx_enabled_path.unlink()
-        if nginx_conf_path.exists():
-            nginx_conf_path.unlink()
+        # Remove symbolic link
+        subprocess.run(
+            ['sudo', 'rm', '-f', nginx_enabled_path],
+            capture_output=True,
+            timeout=5,
+            check=False
+        )
         
-        subprocess.run(['systemctl', 'reload', 'nginx'], check=True, timeout=10)
-        return True, "Nginx configuration removed"
+        # Remove config file
+        subprocess.run(
+            ['sudo', 'rm', '-f', nginx_conf_path],
+            capture_output=True,
+            timeout=5,
+            check=False
+        )
+        
+        # Reload Nginx
+        subprocess.run(
+            ['sudo', 'systemctl', 'reload', 'nginx'],
+            capture_output=True,
+            timeout=10,
+            check=True
+        )
+        
+        return True, "Nginx configuration removed successfully"
+    except subprocess.TimeoutExpired:
+        return False, "Nginx command timed out"
     except Exception as e:
-        return False, f"Failed to remove Nginx config: {str(e)}"
+        return False, f"Failed to remove Nginx config: {str(e)[:200]}"
 
 
 def github_view(request):
@@ -1707,6 +1736,20 @@ def github_view(request):
                 return render(request, "github/hosting/deploy_form.html", {"form": form})
 
             project_dir = Path(settings.USER_PROJECTS_DIR) / project_name
+            
+            # Clean up any corrupted/incomplete directories
+            if project_dir.exists():
+                try:
+                    # Check if it's a valid git repository
+                    Repo(str(project_dir))
+                except Exception:
+                    # Invalid/corrupted directory, remove it
+                    try:
+                        shutil.rmtree(project_dir)
+                        messages.info(request, "Cleaned up incomplete previous deployment.")
+                    except Exception as e:
+                        messages.error(request, f"Failed to clean up directory: {str(e)[:200]}")
+                        return render(request, "github/hosting/deploy_form.html", {"form": form})
 
             with transaction.atomic():
                 port = get_available_port()

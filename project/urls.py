@@ -23,6 +23,8 @@ import os
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
+    #  path('api/', include('app.urls')),
+
 ]
 urlpatterns += static('/sites/', document_root=os.path.join(settings.BASE_DIR, 'media', 'websites'))
 
